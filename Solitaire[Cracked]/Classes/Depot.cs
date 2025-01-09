@@ -3,42 +3,17 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-public class Depot
+public class Depot : CardStackBase
 {
 	
-	public int depotNo;
-	
-	public List<Card> cardPile;
-
-	public Depot(int _depotNo)
+	public Depot(stackType sType, int stackCount)
 	{
 
-        depotNo = _depotNo;
+        stackType = sType;
+        stackCounter = stackCount;
 
 		cardPile = new List<Card>();
 	}
-
-    public void LoadContent()
-    {
-
-        foreach(var card in cardPile)
-        {
-            card.LoadContent();
-        }
-
-    }
-
-    public void Draw()
-    {
-
-        foreach(var card in cardPile)
-        {
-
-            //TODO - Add margins based off resolution
-            card.Draw();
-        }
-
-    }
 
     public void setCardPositions()
     {
@@ -49,21 +24,13 @@ public class Depot
         foreach(var card in cardPile)
         {
 
-            int cardXpos = depotNo + (Constants.CARD_WIDTH * (depotNo - 1));
+            int cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter - 1));
 
             card.cardPos = new Rectangle(cardXpos, cardYPos, Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
 
             //TODO - Add margins based off resolution
 
             cardYPos += Constants.DEPOT_CARD_MARGIN;
-        }
-    }
-
-    public void Update(GameTime gameTime)
-    {
-        foreach(var card in cardPile)
-        {
-            card.Update(gameTime);
         }
     }
 	

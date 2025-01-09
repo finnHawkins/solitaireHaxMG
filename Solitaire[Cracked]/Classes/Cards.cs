@@ -30,7 +30,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	Texture2D cardImg;
 	Texture2D cardBack;
 
-	private GraphicsDeviceManager _graphics;
     private GraphicsDevice graphicsDevice = gd;
 	private readonly ContentManager content = Game1.GetNewContentManagerInstance();
 
@@ -122,7 +121,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	public void Draw()
 	{
 
-		// TODO: Add your drawing code here
 		_spriteBatch.Begin();
 
 		if(isShowingFace)
