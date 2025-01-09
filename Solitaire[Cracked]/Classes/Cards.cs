@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Solitaire_Cracked_;
 
 public enum Suit {
@@ -19,6 +20,9 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 			return ((int) suit == 0 && rank == 0);
 		}
 	}
+
+	public bool isTopmostCard;
+	bool isClicked;
 
 	Suit suit = _suit;
 	int rank = _rank; // J = 11, Q = 12, K = 13
@@ -128,7 +132,26 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	public void Update()
 	{
 
+		var ms = Mouse.GetState();
 
+        if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
+        {
+            
+            if(ms.LeftButton == ButtonState.Pressed)
+            {
+                isClicked = true;
+
+            } else if (ms.LeftButton == ButtonState.Released && isClicked)
+            {
+
+				Console.WriteLine("clicked on " + cardInfo);
+
+                isClicked = false;
+            }
+
+        } else {
+			isClicked = false;
+		}
 
 	}
 

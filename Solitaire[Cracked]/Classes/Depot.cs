@@ -55,9 +55,15 @@ public class Depot
 
             //TODO - Add margins based off resolution
 
-            Console.WriteLine("moving card " + card.cardInfo + " to pos x=" + cardXpos + ", y=" + cardYPos);
-
             cardYPos += Constants.DEPOT_CARD_MARGIN;
+        }
+    }
+
+    public void Update()
+    {
+        foreach(var card in cardPile)
+        {
+            card.Update();
         }
     }
 	

@@ -111,6 +111,11 @@ public class Game1 : Game
             f.Update();
         }
 
+        foreach (var d in depots)
+        {
+            d.Update();
+        }
+
         base.Update(gameTime);
     }
 
@@ -223,6 +228,7 @@ public class Game1 : Game
             }
 
             depots[startingDepot].cardPile.Last().flipCard(true);
+            depots[startingDepot].cardPile.Last().isTopmostCard = true;
 
             startingDepot++;
         }
@@ -262,15 +268,23 @@ public class Game1 : Game
                 card.flipCard(false);
             }
 
+            if(discardPile.cardPile.Count > 0)
+                discardPile.cardPile.Last().isTopmostCard = false;
+
             drawPile.cardPile.AddRange(discardPile.cardPile);
             drawPile.setCardPositions();
-            
+
             discardPile.cardPile.Clear();
 
         } else {
+
             var card = drawPile.cardPile[0];
 
             card.flipCard(true);
+            card.isTopmostCard = true;
+
+            if(discardPile.cardPile.Count > 0)
+                discardPile.cardPile.Last().isTopmostCard = false;
 
             discardPile.cardPile.Add(card);
             

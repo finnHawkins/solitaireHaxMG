@@ -70,6 +70,11 @@ public class Foundation
 
         }
 
+        foreach (var  card in cardPile)
+        {
+            card.Update();
+        }
+
     }
 
     public void Draw()
