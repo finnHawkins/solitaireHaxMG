@@ -8,6 +8,8 @@ public class Constants {
 
     public const int DEPOT_CARD_MARGIN = 10;
 
-    public const int DEPOT_Y_POS = 150;
+    public const int DEPOT_Y_POS = 140;
+
+    public const int CLICK_DELAY = 1;
 
 }

@@ -15,8 +15,6 @@ public class Game1 : Game
     public static ContentManager content;
     public GraphicsDevice device;
 
-    private SpriteBatch _spriteBatch;
-
     private List<Card> deck;
     private List<Depot> depots = [];
     private List<Foundation> foundations = [];
@@ -46,7 +44,7 @@ public class Game1 : Game
             depots.Add(new Depot(i));
         }
 
-        int slotCounter = 3; //one for draw, one for discard
+        int slotCounter = 3; //one for draw, one for discard, so starts at 3
 
         //create foundations
         for (int i = 1; i < 5; i++)
@@ -103,17 +101,17 @@ public class Game1 : Game
             Exit();
 
         // TODO: Add your update logic here
-        drawPile.Update();
-        discardPile.Update();
+        drawPile.Update(gameTime);
+        discardPile.Update(gameTime);
 
         foreach(var f in foundations)
         {
-            f.Update();
+            f.Update(gameTime);
         }
 
         foreach (var d in depots)
         {
-            d.Update();
+            d.Update(gameTime);
         }
 
         base.Update(gameTime);
@@ -190,6 +188,8 @@ public class Game1 : Game
 			{
 				//create new card using rank and suit and add it to the deck
 				var card = new Card((Suit)i, j, GraphicsDevice);
+                card.doubleClickCallback += new Card.CallbackEventHandler(sendCardToFoundation);
+                card.clickAndDragCallback += new Card.CallbackEventHandler(moveCards);
 				deck.Add(card);
 			}
 		}
@@ -246,8 +246,24 @@ public class Game1 : Game
 
         }
 
+        resetDepotTopmostCardFlags();
+
         drawPile.cardPile = deck;
 
+    }
+
+    public void resetDepotTopmostCardFlags()
+    {
+        foreach (var depot in depots)
+        {
+            foreach (var card in depot.cardPile)
+            {
+                card.isTopmostCard = false;
+            }
+
+            if(depot.cardPile.Count > 0)
+                depot.cardPile.Last().isTopmostCard = true;
+        }
     }
 
     #endregion
@@ -294,6 +310,27 @@ public class Game1 : Game
         }
 
         
+
+    }
+
+    public void sendCardToFoundation(Card card)
+    {
+
+        //find card in right stack
+        //check if valid to move to a foundation
+        //if so, move
+
+        Console.WriteLine("attempting to move card " + card.cardInfo + " to foundation");
+
+        //find card - TODO: refactor
+        
+
+
+
+    }
+
+    public void moveCards(Card highestCard)
+    {
 
     }
 

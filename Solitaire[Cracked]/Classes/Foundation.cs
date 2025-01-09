@@ -45,7 +45,7 @@ public class Foundation
 
     }
 
-    public void Update() {
+    public void Update(GameTime gameTime) {
 
         var ms = Mouse.GetState();
 
@@ -72,7 +72,7 @@ public class Foundation
 
         foreach (var  card in cardPile)
         {
-            card.Update();
+            card.Update(gameTime);
         }
 
     }

@@ -59,11 +59,11 @@ public class Depot
         }
     }
 
-    public void Update()
+    public void Update(GameTime gameTime)
     {
         foreach(var card in cardPile)
         {
-            card.Update();
+            card.Update(gameTime);
         }
     }
 	

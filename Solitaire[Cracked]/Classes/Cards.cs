@@ -38,6 +38,13 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 	public Rectangle cardPos;
 
+	public TimeSpan lastClicked;
+	public TimeSpan nextClickAllowed;
+
+    public delegate void CallbackEventHandler(Card card);
+    public event CallbackEventHandler doubleClickCallback;
+    public event CallbackEventHandler clickAndDragCallback;
+
 	public string cardInfo {
 		get {
 
@@ -129,24 +136,47 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 	}
 
-	public void Update()
+	public void Update(GameTime gameTime)
 	{
 
 		var ms = Mouse.GetState();
 
         if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
         {
-            
-            if(ms.LeftButton == ButtonState.Pressed)
-            {
-                isClicked = true;
+            if(isShowingFace && isTopmostCard)
+			{
 
-            } else if (ms.LeftButton == ButtonState.Released && isClicked)
-            {
+				if(gameTime.TotalGameTime > nextClickAllowed)
+				{
 
-				Console.WriteLine("clicked on " + cardInfo);
+					if(ms.LeftButton == ButtonState.Pressed)
+					{
+						isClicked = true;
 
-                isClicked = false;
+					} else if (ms.LeftButton == ButtonState.Released && isClicked)
+					{
+
+						if(lastClicked != default)
+						{
+							if(gameTime.TotalGameTime < lastClicked.Add(new TimeSpan(0, 0, 1)))
+							{
+								Console.WriteLine(cardInfo + " was double clicked");
+								isClicked = false;
+								lastClicked = default;
+								nextClickAllowed = gameTime.TotalGameTime.Add(new TimeSpan(0,0,Constants.CLICK_DELAY));
+
+                                doubleClickCallback?.Invoke(this);
+
+                            }
+						} else {
+							lastClicked = gameTime.TotalGameTime;
+							isClicked = false;
+							Console.WriteLine("clicked on " + cardInfo);
+						}
+
+					}
+				}
+
             }
 
         } else {
