@@ -314,9 +314,7 @@ class DeckManager() {
     public void sendCardToFoundation(Card card)
     {
 
-        //find card in right stack
-        //check if valid to move to a foundation
-        //if so, move
+        //TODO - sort out sprite layer ordering
 
         var parentStack = getParentStack(card);
 

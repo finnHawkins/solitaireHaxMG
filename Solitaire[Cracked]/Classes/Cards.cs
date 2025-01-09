@@ -150,27 +150,35 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 					if(ms.LeftButton == ButtonState.Pressed)
 					{
 						isClicked = true;
+						Console.WriteLine("LB down registered");
 
 					} else if (ms.LeftButton == ButtonState.Released && isClicked)
 					{
+						Console.WriteLine($"LB released on {cardInfo}");
 
+						//
 						if(lastClicked != default)
 						{
+							//has been less than a second
 							if(gameTime.TotalGameTime < lastClicked.Add(new TimeSpan(0, 0, 1)))
 							{
 								Console.WriteLine(cardInfo + " was double clicked");
-								isClicked = false;
 								lastClicked = default;
 								nextClickAllowed = gameTime.TotalGameTime.Add(new TimeSpan(0,0,Constants.CLICK_DELAY));
 
                                 doubleClickCallback?.Invoke(this);
 
-                            }
+                            } else {
+								lastClicked = gameTime.TotalGameTime;
+								Console.WriteLine("First LB click " + cardInfo);
+							}
 						} else {
+
 							lastClicked = gameTime.TotalGameTime;
-							isClicked = false;
-							Console.WriteLine("clicked on " + cardInfo);
+							Console.WriteLine("First LB click " + cardInfo);
 						}
+
+						isClicked = false;
 
 					}
 				}
