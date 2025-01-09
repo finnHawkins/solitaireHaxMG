@@ -17,12 +17,8 @@ public class Foundation : CardStackBase
 	public Foundation(stackType sType, int stackCount)
 	{
 
-        Console.WriteLine("Created new foundation of type " + sType.ToString());
-
         stackType = sType;
         stackCounter = stackCount;
-
-        Console.WriteLine(stackID);
 
         rect = getCardRectangle();
 		

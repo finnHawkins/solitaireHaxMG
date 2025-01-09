@@ -24,8 +24,8 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	public bool isTopmostCard;
 	bool isClicked;
 
-	Suit suit = _suit;
-	int rank = _rank; // J = 11, Q = 12, K = 13
+	public readonly Suit suit = _suit;
+	public readonly int rank = _rank; // J = 11, Q = 12, K = 13
 
 	Texture2D cardImg;
 	Texture2D cardBack;

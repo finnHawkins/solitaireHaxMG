@@ -15,6 +15,8 @@ class DeckManager() {
     private Foundation drawPile = new(stackType.drawPile, 0);
     private Foundation discardPile = new(stackType.discardPile, 0);
 
+    private Dictionary<Card, CardStackBase> lookupTable = new();
+
     public void Initialize(GraphicsDevice gd)
     {
         //create depots
@@ -36,6 +38,8 @@ class DeckManager() {
         generateDeck();
         shuffleDeck();
         dealDeck();
+
+
         
         drawPile.setCardPositions();
         discardPile.setCardPositions();
@@ -72,15 +76,16 @@ class DeckManager() {
         drawPile.Update(gameTime);
         discardPile.Update(gameTime);
 
-        foreach(var f in foundations)
+        for (int i = 0; i < 4; i++)
         {
-            f.Update(gameTime);
+            foundations[i].Update(gameTime);
         }
 
-        foreach (var d in depots)
+        for (int i = 0; i < depots.Count; i++)
         {
-            d.Update(gameTime);
+            depots[i].Update(gameTime);
         }
+
     }
 
     public void Draw()
@@ -152,6 +157,9 @@ class DeckManager() {
             for (int i = startingDepot; i < 7; i++)
             {
                 depots[i].cardPile.Add(deck[0]);
+
+                lookupTable.Add(deck[0], depots[i]);
+
                 deck.RemoveAt(0);
             }
 
@@ -161,6 +169,72 @@ class DeckManager() {
             startingDepot++;
         }
 
+        logDepotCards();
+
+        resetDepotTopmostCardFlags();
+
+        foreach (var card in deck)
+        {
+            drawPile.cardPile.Add(card);
+            lookupTable.Add(card, drawPile);
+
+        }
+
+        logDict();
+
+    }
+
+    public void logDict()
+    {
+
+        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
+        {
+            Console.WriteLine($"{entry.Key.cardInfo} belongs to stack {entry.Value.stackID}");
+        }
+
+    }
+
+    public void logCards(CardStackBase cardStack)
+    {
+        Console.Write($"{cardStack.stackID} cards: ");
+        foreach (var card in cardStack.cardPile)
+        {
+            Console.Write(card.cardInfo + ", ");
+        }
+        Console.WriteLine("---------");
+    }
+
+    public CardStackBase getParentStack(Card card)
+    {
+
+        var stack = lookupTable[card];
+
+        CardStackBase returnedPile;
+
+        if(stack.stackType == stackType.drawPile)
+        {
+            returnedPile = drawPile;
+
+        } else if(stack.stackType == stackType.discardPile) {
+            
+            returnedPile = discardPile;
+
+        } else if(stack.stackType == stackType.foundation) {
+
+            returnedPile = foundations.FirstOrDefault(x => x.stackID == stack.stackID);
+
+        } else {
+
+            returnedPile = depots.FirstOrDefault(x => x.stackID == stack.stackID);
+
+        }
+
+        return returnedPile;
+
+    }
+
+    public void logDepotCards()
+    {
         foreach(var depot in depots)
         {
             string depotCards = "";
@@ -173,20 +247,6 @@ class DeckManager() {
             Console.WriteLine($"Depot {depot.stackCounter} cards: {depotCards}");
 
         }
-
-        resetDepotTopmostCardFlags();
-
-        drawPile.cardPile = deck;
-
-        string drawString = "Draw Pile: ";
-
-        foreach (var card in drawPile.cardPile)
-        {
-            drawString += card.cardInfo + ",";
-        }
-
-        Console.WriteLine(drawString);
-
     }
 
     public void resetDepotTopmostCardFlags()
@@ -218,6 +278,8 @@ class DeckManager() {
             foreach(var card in discardPile.cardPile)
             {
                 card.flipCard(false);
+                
+                lookupTable[card] = drawPile;
             }
 
             if(discardPile.cardPile.Count > 0)
@@ -239,10 +301,12 @@ class DeckManager() {
                 discardPile.cardPile.Last().isTopmostCard = false;
 
             discardPile.cardPile.Add(card);
-            
+
             card.cardPos = discardPile.getCardRectangle();
 
             drawPile.cardPile.RemoveAt(0);
+
+            lookupTable[card] = discardPile;
         }
 
     }
@@ -254,7 +318,69 @@ class DeckManager() {
         //check if valid to move to a foundation
         //if so, move
 
-        Console.WriteLine("attempting to move card " + card.cardInfo + " to foundation");
+        var parentStack = getParentStack(card);
+
+        Console.WriteLine($"{card.cardInfo} belongs to stack {parentStack.stackID}");
+
+        if(parentStack.stackType == stackType.foundation)
+        {
+            //do nothing
+        } else {
+
+            foreach (var f in foundations)
+            {
+                
+                if(f.cardPile.Count > 0)
+                {
+
+                    if(f.cardPile[0].suit == card.suit)
+                    {
+                        if(f.cardPile.Last().rank + 1 == card.rank)
+                        {
+
+                            parentStack.cardPile.Remove(card);
+
+                            if(parentStack.stackType == stackType.discardPile)
+                            {
+                                discardPile.cardPile.Last().isTopmostCard = true;
+                            }
+
+                            f.cardPile.Add(card);
+
+                            lookupTable[card] = f;
+
+                            break;
+                        }
+
+                    }
+
+                } else {
+
+                    if(card.rank == 1)
+                    {
+                        Console.WriteLine($"empty foundation found, adding card to {f.stackID}");
+
+                        parentStack.cardPile.Remove(card);
+                        
+                        if(parentStack.stackType == stackType.discardPile)
+                        {
+                            discardPile.cardPile.Last().isTopmostCard = true;
+                        }
+                        
+                        f.cardPile.Add(card);
+                        f.setCardPositions();
+
+                        lookupTable[card] = f;
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 

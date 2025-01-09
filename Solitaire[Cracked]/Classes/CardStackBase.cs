@@ -21,7 +21,7 @@ public class CardStackBase
 
     public string stackID {
         get {
-            return stackType.ToString() + stackCounter.ToString();
+            return stackType.ToString() + (stackCounter.ToString() == "0" ? "" : stackCounter);
         }
     }
 
@@ -47,9 +47,42 @@ public class CardStackBase
 
     public virtual void Update(GameTime gameTime)
     {
-        foreach(var card in cardPile)
+
+        for (int i = 0; i < cardPile.Count; i++)
         {
-            card.Update(gameTime);
+            cardPile[i].Update(gameTime);
+        }
+        // foreach(var card in cardPile)
+        // {
+        //     card.Update(gameTime);
+        // }
+    }
+
+    public virtual void setCardPositions()
+    {
+
+        foreach (var card in cardPile)
+        {
+
+            int cardXpos = 0;
+
+            switch (stackType)
+            {
+                case stackType.drawPile:
+                    cardXpos = 1;
+                    break;
+                case stackType.discardPile:
+                    cardXpos = 2 + Constants.CARD_WIDTH;
+                    break;
+                case stackType.foundation:
+                    cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter + 1)) + Constants.CARD_WIDTH + 1;
+                    break;
+                case stackType.depot:
+                    break;
+            }
+        
+            card.cardPos = new Rectangle(cardXpos,Constants.TOP_MARGIN,Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
+        
         }
     }
     
