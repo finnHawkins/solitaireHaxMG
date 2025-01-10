@@ -22,7 +22,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	}
 
 	public bool isTopmostCard;
-	bool isClicked;
 
 	public readonly Suit suit = _suit;
 	public readonly int rank = _rank; // J = 11, Q = 12, K = 13
@@ -37,6 +36,12 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 	public Rectangle cardPos;
 
+	bool isBeingClicked;
+
+	/// <summary>
+	/// True if card was clicked within last second
+	/// </summary>
+	bool wasRecentlyClicked;
 	public TimeSpan lastClicked;
 	public TimeSpan nextClickAllowed;
 
@@ -149,36 +154,39 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 					if(ms.LeftButton == ButtonState.Pressed)
 					{
-						isClicked = true;
+						isBeingClicked = true;
 						Console.WriteLine("LB down registered");
 
-					} else if (ms.LeftButton == ButtonState.Released && isClicked)
+					} else if (ms.LeftButton == ButtonState.Released && isBeingClicked)
 					{
 						Console.WriteLine($"LB released on {cardInfo}");
 
-						//
-						if(lastClicked != default)
+						if(wasRecentlyClicked)
 						{
-							//has been less than a second
-							if(gameTime.TotalGameTime < lastClicked.Add(new TimeSpan(0, 0, 1)))
+
+							if(gameTime.TotalGameTime < lastClicked.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY)))
 							{
 								Console.WriteLine(cardInfo + " was double clicked");
-								lastClicked = default;
-								nextClickAllowed = gameTime.TotalGameTime.Add(new TimeSpan(0,0,Constants.CLICK_DELAY));
+								nextClickAllowed = gameTime.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
+								//lastClicked = default;
 
                                 doubleClickCallback?.Invoke(this);
 
+							//
                             } else {
+
+								wasRecentlyClicked = true;
 								lastClicked = gameTime.TotalGameTime;
 								Console.WriteLine("First LB click " + cardInfo);
 							}
 						} else {
-
+							
+							wasRecentlyClicked = true;
 							lastClicked = gameTime.TotalGameTime;
 							Console.WriteLine("First LB click " + cardInfo);
 						}
 
-						isClicked = false;
+						isBeingClicked = false;
 
 					}
 				}
@@ -186,7 +194,7 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
             }
 
         } else {
-			isClicked = false;
+			isBeingClicked = false;
 		}
 
 	}

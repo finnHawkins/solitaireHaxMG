@@ -38,8 +38,6 @@ class DeckManager() {
         generateDeck();
         shuffleDeck();
         dealDeck();
-
-
         
         drawPile.setCardPositions();
         discardPile.setCardPositions();
@@ -57,50 +55,38 @@ class DeckManager() {
 
     public void LoadContent()
     {
-        drawPile.LoadContent();
-        discardPile.LoadContent();
 
-        foreach(var f in foundations)
+        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
         {
-            f.LoadContent();
+            entry.Key.LoadContent();
         }
-
-        foreach (var d in depots)
-        {
-            d.LoadContent();
-        }
+        
     }
 
     public void Update(GameTime gameTime)
     {
+
+        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
+        {
+            entry.Key.Update(gameTime);
+        }
+
+        foreach (var f in foundations)
+        {
+            f.Update(gameTime);
+        }
+
         drawPile.Update(gameTime);
         discardPile.Update(gameTime);
-
-        for (int i = 0; i < 4; i++)
-        {
-            foundations[i].Update(gameTime);
-        }
-
-        for (int i = 0; i < depots.Count; i++)
-        {
-            depots[i].Update(gameTime);
-        }
 
     }
 
     public void Draw()
     {
-        drawPile.Draw();
-        discardPile.Draw();
 
-        foreach(var f in foundations)
+        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
         {
-            f.Draw();
-        }
-
-        foreach (var d in depots)
-        {
-            d.Draw();
+            entry.Key.Draw();
         }
     }
 
@@ -184,26 +170,6 @@ class DeckManager() {
 
     }
 
-    public void logDict()
-    {
-
-        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
-        {
-            Console.WriteLine($"{entry.Key.cardInfo} belongs to stack {entry.Value.stackID}");
-        }
-
-    }
-
-    public void logCards(CardStackBase cardStack)
-    {
-        Console.Write($"{cardStack.stackID} cards: ");
-        foreach (var card in cardStack.cardPile)
-        {
-            Console.Write(card.cardInfo + ", ");
-        }
-        Console.WriteLine("---------");
-    }
-
     public CardStackBase getParentStack(Card card)
     {
 
@@ -233,6 +199,22 @@ class DeckManager() {
 
     }
 
+        public void resetDepotTopmostCardFlags()
+    {
+        foreach (var depot in depots)
+        {
+            foreach (var card in depot.cardPile)
+            {
+                card.isTopmostCard = false;
+            }
+
+            if(depot.cardPile.Count > 0)
+                depot.cardPile.Last().isTopmostCard = true;
+        }
+    }
+
+    #region Logging
+
     public void logDepotCards()
     {
         foreach(var depot in depots)
@@ -249,20 +231,27 @@ class DeckManager() {
         }
     }
 
-    public void resetDepotTopmostCardFlags()
+    public void logDict()
     {
-        foreach (var depot in depots)
-        {
-            foreach (var card in depot.cardPile)
-            {
-                card.isTopmostCard = false;
-            }
 
-            if(depot.cardPile.Count > 0)
-                depot.cardPile.Last().isTopmostCard = true;
+        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
+        {
+            Console.WriteLine($"{entry.Key.cardInfo} belongs to stack {entry.Value.stackID}");
         }
+
     }
 
+    public void logCards(CardStackBase cardStack)
+    {
+        Console.Write($"{cardStack.stackID} cards: ");
+        foreach (var card in cardStack.cardPile)
+        {
+            Console.Write(card.cardInfo + ", ");
+        }
+        Console.WriteLine("---------");
+    }
+
+    #endregion
     
     #region Event Handlers
 
@@ -338,12 +327,21 @@ class DeckManager() {
 
                             parentStack.cardPile.Remove(card);
 
+                            Console.WriteLine($"Removed {card.cardInfo} from {parentStack.stackID} and moved it to {f.stackID}");
+
                             if(parentStack.stackType == stackType.discardPile)
                             {
-                                discardPile.cardPile.Last().isTopmostCard = true;
+                                if(discardPile.cardPile.Count > 0)
+                                    discardPile.cardPile.Last().isTopmostCard = true;
+                            }
+                            if(parentStack.stackType == stackType.depot)
+                            {
+                                if(parentStack.cardPile.Count > 0)
+                                    parentStack.cardPile.Last().isTopmostCard = true;
                             }
 
                             f.cardPile.Add(card);
+                            f.setCardPositions();
 
                             lookupTable[card] = f;
 

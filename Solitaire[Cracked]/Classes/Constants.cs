@@ -10,6 +10,9 @@ public class Constants {
 
     public const int DEPOT_Y_POS = 140;
 
-    public const int CLICK_DELAY = 1;
+    /// <summary>
+    /// In miliseconds
+    /// </summary>
+    public const int CLICK_DELAY = 500;
 
 }

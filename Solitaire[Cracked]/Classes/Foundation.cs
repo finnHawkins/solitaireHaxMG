@@ -52,8 +52,6 @@ public class Foundation : CardStackBase
 
         }
 
-        base.Update(gameTime);
-
     }
 
     public Rectangle getCardRectangle()
