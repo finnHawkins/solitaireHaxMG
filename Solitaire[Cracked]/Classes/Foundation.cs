@@ -77,11 +77,19 @@ public class Foundation : CardStackBase
 
     public void setCardPositions()
     {
+        
+        int cardLayer = cardPile.Count;
 
         foreach(var card in cardPile)
         {
 
             card.cardPos = rect;
+
+            if(stackType == stackType.foundation)
+            {
+                card.cardLayer = cardLayer;
+                cardLayer --;
+            }
 
         }
     }

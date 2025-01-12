@@ -19,6 +19,8 @@ public class Depot : CardStackBase
     {
         int cardYPos = Constants.DEPOT_Y_POS;
 
+        int cardLayer = cardPile.Count;
+
         //TODO - make it so that face down cards have a lower margin
 
         foreach(var card in cardPile)
@@ -31,6 +33,9 @@ public class Depot : CardStackBase
             //TODO - Add margins based off resolution
 
             cardYPos += Constants.DEPOT_CARD_MARGIN;
+            
+            card.cardLayer = cardLayer;
+            cardLayer --;
         }
     }
 	
