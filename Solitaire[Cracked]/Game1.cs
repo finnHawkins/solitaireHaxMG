@@ -56,6 +56,11 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
+        if(Keyboard.GetState().IsKeyDown(Keys.F2))
+        {
+            deckManager.restartGame();
+        }
+
         // TODO: Add your update logic here
         deckManager.Update(gameTime);
 

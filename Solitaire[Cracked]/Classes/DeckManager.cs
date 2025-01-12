@@ -88,6 +88,61 @@ class DeckManager() {
         {
             entry.Key.Draw();
         }
+
+        
+    }
+
+    public void restartGame()
+    {
+
+        Console.WriteLine("Restarting game...");
+
+        deck.Clear();
+
+        foreach (KeyValuePair<Card, CardStackBase> cardEntry in lookupTable)
+        {
+            cardEntry.Key.flipCard(false);
+            deck.Add(cardEntry.Key);
+        }
+
+        Console.WriteLine("Clearing all previous piles...");
+        
+        drawPile.cardPile.Clear();
+        discardPile.cardPile.Clear();
+
+        foreach (var f in foundations)
+        {
+            f.cardPile.Clear();
+        }
+        
+        foreach (var d in depots)
+        {
+            d.cardPile.Clear();
+        }
+
+        lookupTable.Clear();
+
+        Console.WriteLine("Shuffling deck...");
+
+        shuffleDeck();
+
+        Console.WriteLine("Dealing deck...");
+
+        dealDeck();
+
+        drawPile.setCardPositions();
+        discardPile.setCardPositions();
+
+        foreach (var f in foundations)
+        {
+            f.setCardPositions();
+        }
+
+        foreach (var d in depots)
+        {
+            d.setCardPositions();
+        }
+
     }
 
     /// <summary>
@@ -247,6 +302,17 @@ class DeckManager() {
             Console.Write(card.cardInfo + ", ");
         }
         Console.WriteLine("---------");
+    }
+
+    public void logDeck()
+    {
+
+        Console.Write("Deck cards: ");
+        foreach (var card in deck)
+        {
+            Console.Write($"{card.cardInfo},");
+        }
+        Console.Write("\n");
     }
 
     #endregion
