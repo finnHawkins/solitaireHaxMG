@@ -23,6 +23,8 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 	public bool isTopmostCard;
 
+	public int cardLayer;
+
 	public readonly Suit suit = _suit;
 	public readonly int rank = _rank; // J = 11, Q = 12, K = 13
 
@@ -130,7 +132,14 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 		if(isShowingFace)
 		{
-			_spriteBatch.Draw(cardImg, new Vector2(cardPos.X, cardPos.Y), Color.White);
+			_spriteBatch.Draw(texture: cardImg, 
+								destinationRectangle: cardPos, 
+								color: Color.White,
+								layerDepth: cardLayer,
+								rotation: 0,
+								origin: new Vector2(0, 0),
+								effects: SpriteEffects.None,
+								sourceRectangle: null);
 		} else {
 			_spriteBatch.Draw(cardBack, new Vector2(cardPos.X, cardPos.Y), Color.White);
 		}

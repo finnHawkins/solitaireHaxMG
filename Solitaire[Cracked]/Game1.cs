@@ -34,6 +34,10 @@ public class Game1 : Game
         // TODO: Add your initialization logic here
         
         deckManager.Initialize(GraphicsDevice);
+
+        // TODO - find better cursor
+		//var mouseTexture = content.Load<Texture2D>("cursor_pointer");
+        //Mouse.SetCursor(MouseCursor.FromTexture2D(mouseTexture, 0, 0));
         
 
         base.Initialize();

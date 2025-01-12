@@ -166,8 +166,6 @@ class DeckManager() {
 
         }
 
-        logDict();
-
     }
 
     public CardStackBase getParentStack(Card card)
@@ -360,7 +358,8 @@ class DeckManager() {
                         
                         if(parentStack.stackType == stackType.discardPile)
                         {
-                            discardPile.cardPile.Last().isTopmostCard = true;
+                            if(discardPile.cardPile.Count > 0)
+                                discardPile.cardPile.Last().isTopmostCard = true;
                         }
                         
                         f.cardPile.Add(card);
