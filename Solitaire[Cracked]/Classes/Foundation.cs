@@ -7,8 +7,6 @@ using Solitaire_Cracked_;
 // use for Foundations but also use for draw piles
 public class Foundation : CardStackBase
 {
-    public Rectangle rect;
-
     public delegate void CallbackEventHandler();
     public event CallbackEventHandler Callback; 
 
@@ -20,7 +18,7 @@ public class Foundation : CardStackBase
         stackType = sType;
         stackCounter = stackCount;
 
-        rect = getCardRectangle();
+        baseCardPosition = getCardRectangle();
 		
 		cardPile = new List<Card>();
 		
@@ -31,7 +29,7 @@ public class Foundation : CardStackBase
 
         var ms = Mouse.GetState();
 
-        if(rect.Contains(new Vector2(ms.X, ms.Y)))
+        if(baseCardPosition.Contains(new Vector2(ms.X, ms.Y)))
         {
 
             if(ms.LeftButton == ButtonState.Pressed)
@@ -54,27 +52,6 @@ public class Foundation : CardStackBase
 
     }
 
-    public Rectangle getCardRectangle()
-    {
-
-        int cardXpos;
-
-        switch (stackType)
-        {
-            case stackType.drawPile:
-                cardXpos = 1;
-                break;
-            case stackType.discardPile:
-                cardXpos = 2 + Constants.CARD_WIDTH;
-                break;
-            default:
-                cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter + 1)) + Constants.CARD_WIDTH + 1;
-                break;
-        }
-        
-        return new Rectangle(cardXpos,Constants.TOP_MARGIN,Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
-    }
-
     public void setCardPositions()
     {
         
@@ -83,7 +60,7 @@ public class Foundation : CardStackBase
         foreach(var card in cardPile)
         {
 
-            card.cardPos = rect;
+            card.cardPos = baseCardPosition;
 
             if(stackType == stackType.foundation)
             {

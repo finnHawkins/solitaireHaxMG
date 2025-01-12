@@ -12,6 +12,8 @@ public class Depot : CardStackBase
         stackType = sType;
         stackCounter = stackCount;
 
+        baseCardPosition = getCardRectangle();
+
 		cardPile = new List<Card>();
 	}
 

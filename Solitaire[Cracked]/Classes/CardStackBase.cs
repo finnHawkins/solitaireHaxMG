@@ -18,6 +18,8 @@ public class CardStackBase
 
     public stackType stackType;
 
+    public Rectangle baseCardPosition;
+
     public int stackCounter = 0;
 
     public string stackID {
@@ -108,6 +110,27 @@ public class CardStackBase
             Console.WriteLine($"Setting {card.cardInfo} layer to {cardIndex} for stack {stackID}");
 
         }
+    }
+
+    public Rectangle getCardRectangle()
+    {
+
+        int cardXpos = 0;
+
+        switch (stackType)
+        {
+            case stackType.drawPile:
+                cardXpos = 1;
+                break;
+            case stackType.discardPile:
+                cardXpos = 2 + Constants.CARD_WIDTH;
+                break;
+            case stackType.foundation:
+                cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter + 1)) + Constants.CARD_WIDTH + 1;
+                break;
+        }
+        
+        return new Rectangle(cardXpos,Constants.TOP_MARGIN,Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
     }
     
 }
