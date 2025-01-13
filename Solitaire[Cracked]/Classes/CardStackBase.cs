@@ -1,7 +1,5 @@
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 
 public enum stackType {
@@ -68,10 +66,11 @@ public class CardStackBase
                 {
                     card.cardLayer = cardLayer;
                     cardLayer --;
+
                 }
 
             }
-            
+
         } else {
 
             int cardYPos = Constants.DEPOT_Y_POS;
@@ -91,6 +90,7 @@ public class CardStackBase
                 
                 card.cardLayer = cardLayer;
                 cardLayer --;
+
             }
 
         }

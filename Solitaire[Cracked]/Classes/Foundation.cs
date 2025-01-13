@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Solitaire_Cracked_;
 
 // use for Foundations but also use for draw/discard piles
