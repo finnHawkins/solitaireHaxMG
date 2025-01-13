@@ -44,8 +44,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	/// True if card was clicked within last second
 	/// </summary>
 	bool wasRecentlyClicked;
-	public TimeSpan lastClicked;
-	public TimeSpan nextClickAllowed;
 
     public delegate void CallbackEventHandler(Card card);
     public event CallbackEventHandler doubleClickCallback;
@@ -151,48 +149,47 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	public void Update(GameTime gameTime)
 	{
 
-		var ms = Mouse.GetState();
+		var im = Game1.GetInputManager();
+
+		var ms = im.GetMouseState();
 
         if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
         {
             if(isShowingFace && isTopmostCard)
 			{
 
-				if(gameTime.TotalGameTime > nextClickAllowed)
+				if(im.isClickAllowed(gameTime))
 				{
 
-					if(ms.LeftButton == ButtonState.Pressed)
+					if(im.isLeftMouseButtonDown())
 					{
 						isBeingClicked = true;
-						Console.WriteLine("LB down registered");
 
-					} else if (ms.LeftButton == ButtonState.Released && isBeingClicked)
+					} else if (im.isLeftMouseButtonReleased() && isBeingClicked)
 					{
-						Console.WriteLine($"LB released on {cardInfo}");
 
 						if(wasRecentlyClicked)
 						{
 
-							if(gameTime.TotalGameTime < lastClicked.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY)))
+							if(im.clickIsWithinDoubleClickTimeframe(gameTime))
 							{
-								Console.WriteLine(cardInfo + " was double clicked");
-								nextClickAllowed = gameTime.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
-								//lastClicked = default;
+								Console.WriteLine($"{cardInfo} was double clicked");
+
+								wasRecentlyClicked = false;
+
+								im.setClickCooldown(gameTime);
 
                                 doubleClickCallback?.Invoke(this);
 
-							//
                             } else {
 
 								wasRecentlyClicked = true;
-								lastClicked = gameTime.TotalGameTime;
-								Console.WriteLine("First LB click " + cardInfo);
+								
 							}
 						} else {
 							
 							wasRecentlyClicked = true;
-							lastClicked = gameTime.TotalGameTime;
-							Console.WriteLine("First LB click " + cardInfo);
+
 						}
 
 						isBeingClicked = false;
@@ -203,7 +200,9 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
             }
 
         } else {
+
 			isBeingClicked = false;
+
 		}
 
 	}

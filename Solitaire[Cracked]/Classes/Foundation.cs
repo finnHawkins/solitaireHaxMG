@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Solitaire_Cracked_;
 
-// use for Foundations but also use for draw piles
+// use for Foundations but also use for draw/discard piles
 public class Foundation : CardStackBase
 {
     public delegate void CallbackEventHandler();
@@ -27,16 +27,17 @@ public class Foundation : CardStackBase
 
     public override void Update(GameTime gameTime) {
 
-        var ms = Mouse.GetState();
+        var im = Game1.GetInputManager();
+        var ms = im.GetMouseState();
 
         if(baseCardPosition.Contains(new Vector2(ms.X, ms.Y)))
         {
 
-            if(ms.LeftButton == ButtonState.Pressed)
+            if(im.isLeftMouseButtonDown())
             {
                 isClicked = true;
 
-            } else if (ms.LeftButton == ButtonState.Released && isClicked)
+            } else if (im.isLeftMouseButtonReleased() && isClicked)
             {
 
                 if(stackType == stackType.drawPile)

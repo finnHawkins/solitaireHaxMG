@@ -17,6 +17,7 @@ public class Game1 : Game
 
     private SettingsManager settings = new();
     private DeckManager deckManager = new();
+    private static InputManager inputManager = new();
     
     public Game1()
     {
@@ -56,7 +57,9 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        if(Keyboard.GetState().IsKeyDown(Keys.F2))
+        inputManager.Update(gameTime);
+
+        if(inputManager.shouldRestartGame)
         {
             deckManager.restartGame();
         }
@@ -101,6 +104,11 @@ public class Game1 : Game
       ContentManager temp = new ContentManager(content.ServiceProvider, content.RootDirectory);
       temp.RootDirectory = "Content";
       return temp;
+    }
+
+    public static InputManager GetInputManager()
+    {
+        return inputManager;
     }
 
     public GraphicsDevice GetGraphicsDevice()

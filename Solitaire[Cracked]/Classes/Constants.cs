@@ -1,4 +1,6 @@
 
+using Microsoft.Xna.Framework.Input;
+
 public class Constants {
 
     public const int CARD_WIDTH = 90;
@@ -14,5 +16,7 @@ public class Constants {
     /// In miliseconds
     /// </summary>
     public const int CLICK_DELAY = 500;
+
+    public const Keys RESTART_GAME_KEY = Keys.F2;
 
 }
