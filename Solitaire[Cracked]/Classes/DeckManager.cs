@@ -102,6 +102,7 @@ class DeckManager() {
         foreach (KeyValuePair<Card, CardStackBase> cardEntry in lookupTable)
         {
             cardEntry.Key.flipCard(false);
+            cardEntry.Key.cardLayer = 0;
             deck.Add(cardEntry.Key);
         }
 
