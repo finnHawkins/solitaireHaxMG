@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Solitaire_Cracked_;
 
 public class InputManager()
 {
@@ -50,7 +51,6 @@ public class InputManager()
     {
         if(Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
-		    Console.WriteLine("LB down registered");
             return true;
         }
 
@@ -83,7 +83,7 @@ public class InputManager()
 
     public bool clickIsWithinDoubleClickTimeframe(GameTime gameTime)
     {
-        return gameTime.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
+        return gameTime.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
     }
 
 }

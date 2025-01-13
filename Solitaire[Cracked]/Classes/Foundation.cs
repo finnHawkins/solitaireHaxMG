@@ -52,24 +52,5 @@ public class Foundation : CardStackBase
         }
 
     }
-
-    public void setCardPositions()
-    {
-        
-        int cardLayer = cardPile.Count;
-
-        foreach(var card in cardPile)
-        {
-
-            card.cardPos = baseCardPosition;
-
-            if(stackType == stackType.foundation)
-            {
-                card.cardLayer = cardLayer;
-                cardLayer --;
-            }
-
-        }
-    }
 	
 }

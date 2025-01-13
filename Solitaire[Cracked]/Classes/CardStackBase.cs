@@ -49,67 +49,70 @@ public class CardStackBase
     }
 
     public virtual void Update(GameTime gameTime)
-    {
-
-        for (int i = 0; i < cardPile.Count; i++)
-        {
-            cardPile[i].Update(gameTime);
-        }
-        // foreach(var card in cardPile)
-        // {
-        //     card.Update(gameTime);
-        // }
-    }
+    {}
 
     public virtual void setCardPositions()
     {
 
-        int cardIndex = 0;
+        int cardLayer = cardPile.Count;
 
-        foreach (var card in cardPile)
+        if(stackType != stackType.depot)
         {
 
-            int cardXpos = cardPile.Count;
-
-            if(stackType == stackType.depot)
+            foreach(var card in cardPile)
             {
-                int cardYPos = Constants.DEPOT_Y_POS;
 
-                //TODO - make it so that face down cards have a lower margin
+                card.cardPos = baseCardPosition;
 
-                cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter - 1));
+                if(stackType == stackType.foundation)
+                {
+                    card.cardLayer = cardLayer;
+                    cardLayer --;
+                }
+
+            }
+            
+        } else {
+
+            int cardYPos = Constants.DEPOT_Y_POS;
+
+            //TODO - make it so that face down cards have a lower margin
+
+            foreach(var card in cardPile)
+            {
+
+                int cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter - 1));
 
                 card.cardPos = new Rectangle(cardXpos, cardYPos, Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
 
                 //TODO - Add margins based off resolution
 
                 cardYPos += Constants.DEPOT_CARD_MARGIN;
-
-            } else {
-
-                switch (stackType)
-                {
-                    case stackType.drawPile:
-                        cardXpos = 1;
-                        break;
-                    case stackType.discardPile:
-                        cardXpos = 2 + Constants.CARD_WIDTH;
-                        break;
-                    case stackType.foundation:
-                        cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter + 1)) + Constants.CARD_WIDTH + 1;
-                        break;
-                }
-            
-                card.cardPos = new Rectangle(cardXpos,Constants.TOP_MARGIN,Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
-
+                
+                card.cardLayer = cardLayer;
+                cardLayer --;
             }
-        
-            card.cardLayer = cardIndex;
-            cardIndex--;
-
-            Console.WriteLine($"Setting {card.cardInfo} layer to {cardIndex} for stack {stackID}");
 
         }
+
+    }
+
+    public void updateCardLayers()
+    {
+
+        int cardLayer = cardPile.Count;
+
+        foreach (var card in cardPile)
+        {
+            if(stackType == stackType.foundation || stackType == stackType.depot)
+            {
+                card.cardLayer = cardLayer;
+                cardLayer--;
+            } else {
+                card.cardLayer = 0;
+            }
+        }
+
     }
 
     public Rectangle getCardRectangle()
