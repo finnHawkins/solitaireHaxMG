@@ -394,16 +394,9 @@ public class DeckManager() {
 
                             Console.WriteLine($"Removed {card.cardInfo} from {parentStack.stackID} and moved it to {f.stackID}");
 
-                            if(parentStack.stackType == stackType.discardPile)
-                            {
-                                if(discardPile.cardPile.Count > 0)
-                                    discardPile.cardPile.Last().isTopmostCard = true;
-                            }
-                            if(parentStack.stackType == stackType.depot)
-                            {
-                                if(parentStack.cardPile.Count > 0)
-                                    parentStack.cardPile.Last().isTopmostCard = true;
-                            }
+                            if(parentStack.cardPile.Count > 0)
+                                parentStack.cardPile.Last().isTopmostCard = true;
+
 
                             f.cardPile.Add(card);
                             f.setCardPositions();
@@ -423,12 +416,9 @@ public class DeckManager() {
 
                         parentStack.cardPile.Remove(card);
                         
-                        if(parentStack.stackType == stackType.discardPile)
-                        {
-                            if(discardPile.cardPile.Count > 0)
-                                discardPile.cardPile.Last().isTopmostCard = true;
-                        }
-                        
+                        if(parentStack.cardPile.Count > 0)
+                            parentStack.cardPile.Last().isTopmostCard = true;
+
                         f.cardPile.Add(card);
                         f.setCardPositions();
 
@@ -443,6 +433,19 @@ public class DeckManager() {
             }
 
         }
+
+        foreach (var f in foundations)
+        {
+            f.updateCardLayers();
+        }
+
+        foreach (var d in depots)
+        {
+            d.updateCardLayers();
+        }
+
+        drawPile.updateCardLayers();
+        discardPile.updateCardLayers();
 
     }
 

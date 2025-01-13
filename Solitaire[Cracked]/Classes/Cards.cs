@@ -155,7 +155,7 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
         if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
         {
-            if(isShowingFace && isTopmostCard)
+            if(isTopmostCard)
 			{
 
 				if(im.isClickAllowed(gameTime))
@@ -165,30 +165,48 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 					{
 						isBeingClicked = true;
 
+						//TODO - add mouse dragging
+
 					} else if (im.isLeftMouseButtonReleased() && isBeingClicked)
 					{
 
-						if(wasRecentlyClicked)
+						if(isShowingFace)
 						{
 
-							if(im.clickIsWithinDoubleClickTimeframe(gameTime))
+							//TODO - check for movement
+
+							if(wasRecentlyClicked)
 							{
-								Console.WriteLine($"{cardInfo} was double clicked");
 
-								wasRecentlyClicked = false;
+								if(im.clickIsWithinDoubleClickTimeframe(gameTime))
+								{
+									Console.WriteLine($"{cardInfo} was double clicked");
 
-								im.setClickCooldown(gameTime);
+									wasRecentlyClicked = false;
 
-                                doubleClickCallback?.Invoke(this);
+									im.setClickCooldown(gameTime);
 
-                            } else {
+									doubleClickCallback?.Invoke(this);
 
-								wasRecentlyClicked = true;
+								} else {
+
+									wasRecentlyClicked = true;
+
+								}
+							} else {
 								
+								wasRecentlyClicked = true;
+
 							}
+
 						} else {
-							
-							wasRecentlyClicked = true;
+
+							Console.WriteLine($"Turned over card {cardInfo} clicked");
+
+							flipCard(true);
+							im.setClickCooldown(gameTime);
+
+							Console.WriteLine($"cardLayer: {cardLayer}, cardFacing up {isShowingFace}");
 
 						}
 

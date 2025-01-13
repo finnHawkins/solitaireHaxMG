@@ -15,7 +15,12 @@ public class Constants {
     /// <summary>
     /// In miliseconds
     /// </summary>
-    public const int CLICK_DELAY = 500;
+    public const int CLICK_DELAY = 250;
+
+    /// <summary>
+    /// In miliseconds
+    /// </summary>
+    public const int DOUBLE_CLICK_TOLERANCE = 500;
 
     public const Keys RESTART_GAME_KEY = Keys.F2;
 
