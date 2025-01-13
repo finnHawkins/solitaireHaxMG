@@ -23,4 +23,7 @@ public class Constants {
 
     public const Keys RESTART_GAME_KEY = Keys.F2;
 
+    public const int BASE_WIDTH = 640;
+    public const int BASE_HEIGHT = 360;
+
 }

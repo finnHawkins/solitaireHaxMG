@@ -7,11 +7,11 @@ namespace Solitaire_Cracked_;
 
 public class Game1 : Game
 {
-    private GraphicsDeviceManager _graphics;
+    private static GraphicsDeviceManager _graphics;
     public static ContentManager content;
     public GraphicsDevice device;
 
-    private SettingsManager settings = new();
+    private static SettingsManager settings;
     private DeckManager deckManager = new();
     private static InputManager inputManager = new();
     
@@ -23,7 +23,9 @@ public class Game1 : Game
 
         IsMouseVisible = true;
 
-        changeResolution(640, 360);
+        settings = new SettingsManager(_graphics);
+
+        settings.changeResolution(Constants.BASE_WIDTH, Constants.BASE_HEIGHT);
     }
 
     protected override void Initialize()
@@ -78,18 +80,6 @@ public class Game1 : Game
     }
 
     /// <summary>
-    /// Modifies the Graphics Manager's Preferred Back Buffer width and height to given values.
-    /// </summary>
-    /// <param name="width">PreferredBackBufferWidth</param>
-    /// <param name="height">PreferredBackBufferHeight</param>
-    private void changeResolution(int width, int height)
-    {
-        _graphics.PreferredBackBufferWidth = width;
-        _graphics.PreferredBackBufferHeight = height;
-        _graphics.ApplyChanges();
-    }
-
-    /// <summary>
     /// https://community.monogame.net/t/passing-the-contentmanager-to-every-class-feels-wrong-is-it/10470/9
     /// Code copied from the above link for more finessed content managers
     /// </summary>
@@ -107,6 +97,12 @@ public class Game1 : Game
         return inputManager;
     }
 
+    public static SettingsManager GetSettingsManager()
+    {
+        return settings;
+    }
+
+    // may not be needed
     public GraphicsDevice GetGraphicsDevice()
     {
         return device;

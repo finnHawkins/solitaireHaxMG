@@ -12,8 +12,6 @@ public class InputManager()
     public TimeSpan lastClickTime;
     public TimeSpan nextClickAllowedTime;
 
-    public Card lastCardClicked;
-
     public void Update(GameTime gameTime)
     {
 
@@ -36,10 +34,9 @@ public class InputManager()
             lastClickTime = gameTime.TotalGameTime;
         }
 
-
     }
 
-    public MouseState GetMouseState()
+    public MouseState getMouseState()
     {
         return Mouse.GetState();
     }

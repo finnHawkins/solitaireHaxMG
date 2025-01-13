@@ -26,7 +26,7 @@ public class Foundation : CardStackBase
     public override void Update(GameTime gameTime) {
 
         var im = Game1.GetInputManager();
-        var ms = im.GetMouseState();
+        var ms = im.getMouseState();
 
         if(baseCardPosition.Contains(new Vector2(ms.X, ms.Y)))
         {

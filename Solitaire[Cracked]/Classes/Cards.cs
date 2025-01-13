@@ -150,7 +150,7 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 		var im = Game1.GetInputManager();
 
-		var ms = im.GetMouseState();
+		var ms = im.getMouseState();
 
         if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
         {
