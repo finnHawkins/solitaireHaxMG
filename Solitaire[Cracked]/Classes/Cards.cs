@@ -5,7 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Solitaire_Cracked_;
 
 public enum Suit {
-	H = 1,
+	J = 0,
+	H,
 	C,
 	D,
 	S
@@ -13,10 +14,11 @@ public enum Suit {
 
 public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 {
-    bool isShowingFace;
+    public bool isShowingFace { get; private set; }
+	
 	bool isJoker {
 		get {
-			return ((int) suit == 0 && rank == 0);
+			return suit == Suit.J;
 		}
 	}
 
@@ -43,6 +45,8 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	/// True if card was clicked within last second
 	/// </summary>
 	bool wasRecentlyClicked;
+
+	public bool isMoving;
 
     public delegate void CallbackEventHandler(Card card);
     public event CallbackEventHandler doubleClickCallback;
@@ -157,70 +161,23 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
             if(isTopmostCard)
 			{
 
-				if(im.isClickAllowed(gameTime))
-				{
-
-					if(im.isLeftMouseButtonDown())
-					{
-						isBeingClicked = true;
-
-						//TODO - add mouse dragging
-
-					} else if (im.isLeftMouseButtonReleased() && isBeingClicked)
-					{
-
-						if(isShowingFace)
-						{
-
-							//TODO - check for movement
-
-							if(wasRecentlyClicked)
-							{
-
-								if(im.clickIsWithinDoubleClickTimeframe(gameTime))
-								{
-									Console.WriteLine($"{cardInfo} was double clicked");
-
-									wasRecentlyClicked = false;
-
-									im.setClickCooldown(gameTime);
-
-									doubleClickCallback?.Invoke(this);
-
-								} else {
-
-									wasRecentlyClicked = true;
-
-								}
-							} else {
-								
-								wasRecentlyClicked = true;
-
-							}
-
-						} else {
-
-							Console.WriteLine($"Turned over card {cardInfo} clicked");
-
-							flipCard(true);
-							im.setClickCooldown(gameTime);
-
-							Console.WriteLine($"cardLayer: {cardLayer}, cardFacing up {isShowingFace}");
-
-						}
-
-						isBeingClicked = false;
-
-					}
-				}
+				im.processCardClick(this);
 
             }
 
-        } else {
+        }
 
-			isBeingClicked = false;
+	}
 
-		}
+	public void callDoubleClickCallback()
+	{
+
+		doubleClickCallback?.Invoke(this);
+
+	}
+
+	public void callMoveCallback()
+	{
 
 	}
 

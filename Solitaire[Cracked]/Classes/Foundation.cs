@@ -5,6 +5,7 @@ using Solitaire_Cracked_;
 // use for Foundations but also use for draw/discard piles
 public class Foundation : CardStackBase
 {
+    
     public delegate void CallbackEventHandler();
     public event CallbackEventHandler Callback; 
 

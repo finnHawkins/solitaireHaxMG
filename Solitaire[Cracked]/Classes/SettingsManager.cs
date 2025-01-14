@@ -6,7 +6,7 @@ public class SettingsManager {
     // 1 = 640 x 360
     // 2 = 1280 x 720
     // 3 = 1920 x 1080
-    public int resolutionMultiplier = 2;
+    public int resolutionMultiplier = 1;
 
     public bool cheatsEnabled;
 
@@ -27,6 +27,7 @@ public class SettingsManager {
 
     public SettingsManager(GraphicsDeviceManager graphics)
     {
+        
         _graphics = graphics;
 
     }

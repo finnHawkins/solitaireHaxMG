@@ -12,6 +12,14 @@ public class InputManager()
     public TimeSpan lastClickTime;
     public TimeSpan nextClickAllowedTime;
 
+    MouseState prevMouseState;
+    MouseState currMouseState;
+
+    GameTime gt;
+
+    Card lastCardInteractedWith;
+    Card cardBeingInteractedWith;
+
     public void Update(GameTime gameTime)
     {
 
@@ -34,16 +42,26 @@ public class InputManager()
             lastClickTime = gameTime.TotalGameTime;
         }
 
+        prevMouseState = currMouseState;
+        currMouseState = Mouse.GetState();
+
+        gt = gameTime;
+
+        if(cardBeingInteractedWith != null)
+        {
+            Console.WriteLine($"Interacting with card {cardBeingInteractedWith.cardInfo}");
+        }
+
     }
 
     public MouseState getMouseState()
     {
-        return Mouse.GetState();
+        return currMouseState;
     }
 
     public bool isLeftMouseButtonDown()
     {
-        if(Mouse.GetState().LeftButton == ButtonState.Pressed)
+        if(currMouseState.LeftButton == ButtonState.Pressed)
         {
             return true;
         }
@@ -53,7 +71,7 @@ public class InputManager()
 
     public bool isLeftMouseButtonReleased()
     {
-        if(Mouse.GetState().LeftButton == ButtonState.Released)
+        if(currMouseState.LeftButton == ButtonState.Released)
         {
             return true;
         }
@@ -61,23 +79,92 @@ public class InputManager()
         return false;
     }
 
-    public bool isClickAllowed(GameTime gameTime)
+    public bool isClickAllowed()
     {
 
-        return gameTime.TotalGameTime > nextClickAllowedTime;
+        return gt.TotalGameTime > nextClickAllowedTime;
 
     }
 
-    public void setClickCooldown(GameTime gameTime)
+    public void setClickCooldown()
     {
 
-		nextClickAllowedTime = gameTime.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
+		nextClickAllowedTime = gt.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
     
     }
 
-    public bool clickIsWithinDoubleClickTimeframe(GameTime gameTime)
+    public bool clickIsWithinDoubleClickTimeframe()
     {
-        return gameTime.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
+        return gt.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
+    }
+
+    public bool isMouseMoving()
+    {
+        return currMouseState.X == prevMouseState.X && currMouseState.Y == prevMouseState.Y;
+    }
+
+    public void processCardClick(Card card)
+    {
+
+        if(isClickAllowed())
+        {
+
+            if(isLeftMouseButtonDown() && cardBeingInteractedWith == null)
+            {
+
+                cardBeingInteractedWith = card;
+
+            } else if(isLeftMouseButtonReleased() && cardBeingInteractedWith == card)
+            {
+
+                if(card.isShowingFace)
+                {
+
+                    if(lastCardInteractedWith == card)
+                    {
+
+                        if(clickIsWithinDoubleClickTimeframe())
+                        {
+
+							Console.WriteLine($"{card.cardInfo} was double clicked");
+                            
+                            setClickCooldown();
+
+                            card.callDoubleClickCallback();
+
+                        } else {
+
+                            lastCardInteractedWith = card;
+
+                        }
+
+                    } else {
+
+                        lastCardInteractedWith = card;
+
+                    }
+
+                } else {
+
+					Console.WriteLine($"Turned over card {card.cardInfo} clicked");
+
+                    card.flipCard(true);
+
+                    setClickCooldown();
+
+                }
+
+                cardBeingInteractedWith = null;
+                lastCardInteractedWith = card;
+
+            } else {
+
+                cardBeingInteractedWith = null;
+
+            }
+
+        }
+
     }
 
 }
