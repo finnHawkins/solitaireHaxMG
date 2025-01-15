@@ -15,7 +15,7 @@ public enum Suit {
 public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 {
     public bool isShowingFace { get; private set; }
-	
+
 	bool isJoker {
 		get {
 			return suit == Suit.J;
@@ -38,13 +38,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
     private SpriteBatch _spriteBatch;
 
 	public Rectangle cardPos;
-
-	bool isBeingClicked;
-
-	/// <summary>
-	/// True if card was clicked within last second
-	/// </summary>
-	bool wasRecentlyClicked;
 
 	public bool isMoving;
 

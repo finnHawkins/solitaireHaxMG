@@ -61,6 +61,7 @@ public class InputManager()
 
     public bool isLeftMouseButtonDown()
     {
+
         if(currMouseState.LeftButton == ButtonState.Pressed)
         {
             return true;
@@ -71,6 +72,7 @@ public class InputManager()
 
     public bool isLeftMouseButtonReleased()
     {
+
         if(currMouseState.LeftButton == ButtonState.Released)
         {
             return true;
@@ -84,6 +86,12 @@ public class InputManager()
 
         return gt.TotalGameTime > nextClickAllowedTime;
 
+    }
+
+    public bool isExitGameButtonDown()
+    {
+        //GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Constants.END_GAME_KEY);
+        return Keyboard.GetState().IsKeyDown(Constants.END_GAME_KEY);
     }
 
     public void setClickCooldown()
@@ -109,7 +117,7 @@ public class InputManager()
         if(isClickAllowed())
         {
 
-            if(isLeftMouseButtonDown() && cardBeingInteractedWith == null)
+            if(isLeftMouseButtonDown() /*&& cardBeingInteractedWith == null*/)
             {
 
                 cardBeingInteractedWith = card;
