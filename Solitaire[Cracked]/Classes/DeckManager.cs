@@ -472,6 +472,15 @@ public class DeckManager() {
 
     }
 
+    public void SetCardStackToMoving()
+    {
+
+        //have moving stack variable storing all cards being moved
+        //for each one, have 
+
+
+    }
+
     #endregion
 
 }

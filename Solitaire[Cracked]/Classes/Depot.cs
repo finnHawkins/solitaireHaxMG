@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Solitaire_Cracked_;
 
 public class Depot : CardStackBase
 {
@@ -12,6 +15,7 @@ public class Depot : CardStackBase
         baseCardPosition = getCardRectangle();
 
 		cardPile = new List<Card>();
+		
 	}
 	
 }

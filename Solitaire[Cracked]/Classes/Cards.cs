@@ -39,7 +39,9 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 	public Rectangle cardPos;
 
-	public bool isMoving;
+	public Rectangle movingCardPos;
+
+	public bool isMoving { get; private set; }
 
     public delegate void CallbackEventHandler(Card card);
     public event CallbackEventHandler doubleClickCallback;
@@ -72,20 +74,20 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 			switch (suit)
 			{
 				case Suit.H:
-					cardSuit = "Heart";
+					cardSuit = "Hearts";
 					break;
 				case Suit.C:
-					cardSuit = "Club";
+					cardSuit = "Clubs";
 					break;
 				case Suit.D:
-					cardSuit = "Diamond";
+					cardSuit = "Diamonds";
 					break;
 				case Suit.S:
-					cardSuit = "Spade";
+					cardSuit = "Spades";
 					break;
 			}
 
-			return cardRank + " of " + cardSuit + "s";
+			return cardRank + " of " + cardSuit;
 		}
 	}
 	
@@ -154,6 +156,13 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 			im.processCardClick(this);
 
         }
+
+	}
+
+	public void setCardMoving()
+	{
+
+
 
 	}
 

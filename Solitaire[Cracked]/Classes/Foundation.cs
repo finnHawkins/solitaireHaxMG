@@ -46,9 +46,12 @@ public class Foundation : CardStackBase
                 }
 
                 isClicked = false;
+                
             }
 
         }
+
+        base.Update(gameTime);
 
     }
 	

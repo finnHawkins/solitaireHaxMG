@@ -1,6 +1,9 @@
 
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Xna.Framework;
+using Solitaire_Cracked_;
 
 public enum stackType {
     drawPile,
@@ -80,9 +83,7 @@ public class CardStackBase
             foreach(var card in cardPile)
             {
 
-                int cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter - 1));
-
-                card.cardPos = new Rectangle(cardXpos, cardYPos, Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
+                card.cardPos = new Rectangle(baseCardPosition.X, cardYPos, Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
 
                 //TODO - Add margins based off resolution
 
@@ -100,7 +101,7 @@ public class CardStackBase
     public void updateCardLayers()
     {
 
-        int cardLayer = cardPile.Count;
+        int cardLayer = cardPile.Count - 1;
 
         foreach (var card in cardPile)
         {
@@ -119,6 +120,7 @@ public class CardStackBase
     {
 
         int cardXpos = 0;
+        int cardYPos = Constants.TOP_MARGIN;
 
         switch (stackType)
         {
@@ -131,9 +133,15 @@ public class CardStackBase
             case stackType.foundation:
                 cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter + 1)) + Constants.CARD_WIDTH + 1;
                 break;
+            case stackType.depot:
+
+                //use the first card place
+                cardYPos = Constants.DEPOT_Y_POS;
+                cardXpos = stackCounter + (Constants.CARD_WIDTH * (stackCounter - 1));
+                break;
         }
         
-        return new Rectangle(cardXpos,Constants.TOP_MARGIN,Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
+        return new Rectangle(cardXpos,cardYPos,Constants.CARD_WIDTH, Constants.CARD_HEIGHT);
     }
     
 }

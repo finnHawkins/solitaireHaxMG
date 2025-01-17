@@ -20,8 +20,6 @@ public class InputManager()
     Card lastCardInteractedWith;
     Card cardBeingInteractedWith;
 
-    public Vector2 mouseOffsetOnClick { get; private set; }
-
     public delegate Card CallbackEventHandler(Vector2 mousePos, Card invokingCard);
     public event CallbackEventHandler getTopmostCardAtMousePos;
 
@@ -111,9 +109,14 @@ public class InputManager()
         return gt.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
     }
 
-    public bool isMouseMoving()
+    public Vector2 getMouseDifferenceSinceLastFrame()
     {
-        return currMouseState.X == prevMouseState.X && currMouseState.Y == prevMouseState.Y;
+
+        int xDiff = currMouseState.X - prevMouseState.X;
+        int yDiff = currMouseState.Y - prevMouseState.Y;
+
+        return new Vector2(xDiff, yDiff);
+        
     }
 
     public void processCardClick(Card card)
@@ -125,25 +128,29 @@ public class InputManager()
             if(isLeftMouseButtonDown())
             {
 
+                var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
+
+                var topMostcard = getTopmostCardAtMousePos?.Invoke(mousePos, card);
+
                 //mouse was clicked this frame
                 if(prevMouseState.LeftButton != ButtonState.Pressed)
                 {
 
-                    var topMostcard = getTopmostCardAtMousePos?.Invoke(mouseOffsetOnClick, card);
-
                     if(topMostcard == card)
                     {
 
-                        if(card.isShowingFace == true || (card.isTopmostCard && card.isShowingFace == false))
+                        //topmost card check for flipped cards
+                        if(card.isShowingFace == true || card.isTopmostCard)
                         {
 
                             cardBeingInteractedWith = card;
                             Console.WriteLine($"{card.cardInfo} clicked");
 
+                            //think this should be the other way round
                             int cardOffsetY = currMouseState.Y - card.cardPos.Y;
                             int cardOffsetX = currMouseState.X - card.cardPos.X;
 
-                            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+                            // mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
 
                             Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
                         }
@@ -152,7 +159,7 @@ public class InputManager()
 
                 } else { // assume card is being moved
 
-                    
+
 
                 }
 
