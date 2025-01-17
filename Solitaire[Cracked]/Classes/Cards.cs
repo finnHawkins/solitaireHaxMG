@@ -154,6 +154,7 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
             if(isTopmostCard)
 			{
 
+
 				im.processCardClick(this);
 
             }

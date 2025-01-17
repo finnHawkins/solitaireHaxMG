@@ -20,6 +20,8 @@ public class InputManager()
     Card lastCardInteractedWith;
     Card cardBeingInteractedWith;
 
+    Vector2 mouseOffsetOnClick;
+
     public void Update(GameTime gameTime)
     {
 
@@ -120,10 +122,28 @@ public class InputManager()
             if(isLeftMouseButtonDown() /*&& cardBeingInteractedWith == null*/)
             {
 
-                cardBeingInteractedWith = card;
+                if(prevMouseState.LeftButton != ButtonState.Pressed)
+                {
+
+                    cardBeingInteractedWith = card;
+                    Console.WriteLine($"{card.cardInfo} clicked");
+
+                    int cardOffsetY = currMouseState.Y - card.cardPos.Y;
+					int cardOffsetX = currMouseState.X - card.cardPos.X;
+
+                    mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+
+                    Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
+
+                } else { // assume card is being moved
+
+                }
+
 
             } else if(isLeftMouseButtonReleased() && cardBeingInteractedWith == card)
             {
+
+                //check for moving
 
                 if(card.isShowingFace)
                 {
