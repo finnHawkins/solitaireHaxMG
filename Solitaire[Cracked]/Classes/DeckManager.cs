@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 public class DeckManager() {
 
@@ -89,7 +91,6 @@ public class DeckManager() {
             entry.Key.Draw();
         }
 
-        
     }
 
     public void restartGame()
@@ -164,7 +165,6 @@ public class DeckManager() {
 				//create new card using rank and suit and add it to the deck
 				var card = new Card((Suit)i, j, graphics);
                 card.doubleClickCallback += new Card.CallbackEventHandler(sendCardToFoundation);
-                card.clickAndDragCallback += new Card.CallbackEventHandler(moveCards);
 				deck.Add(card);
 			}
 		}
@@ -368,8 +368,6 @@ public class DeckManager() {
     public void sendCardToFoundation(Card card)
     {
 
-        //TODO - sort out sprite layer ordering
-
         var parentStack = getParentStack(card);
 
         Console.WriteLine($"{card.cardInfo} belongs to stack {parentStack.stackID}");
@@ -449,8 +447,28 @@ public class DeckManager() {
 
     }
 
-    public void moveCards(Card highestCard)
+    public Card getTopmostCardAtMousePos(Vector2 mousePos, Card invokingCard)
     {
+
+        var ownerStack = getParentStack(invokingCard);
+
+        var applicableCards = ownerStack.cardPile.Where(card => card.isShowingFace == true && card.cardPos.Contains(mousePos.X, mousePos.Y));
+
+        Card topCard = invokingCard;
+
+        //Console.WriteLine($"Found {applicableCards.Count()} applicable Cards");
+
+        Console.WriteLine($"invoking card Layer = {invokingCard.cardLayer}");
+
+        foreach(var card in applicableCards)
+        {
+            if(card.cardLayer < topCard.cardLayer)
+                topCard = card;
+        }
+
+        //Console.WriteLine($"Topmost card beneath mouse is {topCard.cardInfo}");
+
+        return topCard;
 
     }
 

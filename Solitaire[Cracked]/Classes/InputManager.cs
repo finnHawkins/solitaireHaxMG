@@ -5,12 +5,12 @@ using Microsoft.Xna.Framework.Input;
 public class InputManager()
 {
 
-    private bool isRestartKeyBeingPressed;
+    bool isRestartKeyBeingPressed;
 
-    public bool shouldRestartGame;
+    public bool shouldRestartGame { get; private set; }
 
-    public TimeSpan lastClickTime;
-    public TimeSpan nextClickAllowedTime;
+    public TimeSpan lastClickTime { get; private set; }
+    public TimeSpan nextClickAllowedTime { get; private set; }
 
     MouseState prevMouseState;
     MouseState currMouseState;
@@ -20,7 +20,10 @@ public class InputManager()
     Card lastCardInteractedWith;
     Card cardBeingInteractedWith;
 
-    Vector2 mouseOffsetOnClick;
+    public Vector2 mouseOffsetOnClick { get; private set; }
+
+    public delegate Card CallbackEventHandler(Vector2 mousePos, Card invokingCard);
+    public event CallbackEventHandler getTopmostCardAtMousePos;
 
     public void Update(GameTime gameTime)
     {
@@ -75,7 +78,7 @@ public class InputManager()
     public bool isLeftMouseButtonReleased()
     {
 
-        if(currMouseState.LeftButton == ButtonState.Released)
+        if(currMouseState.LeftButton == ButtonState.Released && prevMouseState.LeftButton == ButtonState.Pressed)
         {
             return true;
         }
@@ -119,46 +122,67 @@ public class InputManager()
         if(isClickAllowed())
         {
 
-            if(isLeftMouseButtonDown() /*&& cardBeingInteractedWith == null*/)
+            if(isLeftMouseButtonDown())
             {
 
+                //mouse was clicked this frame
                 if(prevMouseState.LeftButton != ButtonState.Pressed)
                 {
 
-                    cardBeingInteractedWith = card;
-                    Console.WriteLine($"{card.cardInfo} clicked");
+                    var topMostcard = getTopmostCardAtMousePos?.Invoke(mouseOffsetOnClick, card);
 
-                    int cardOffsetY = currMouseState.Y - card.cardPos.Y;
-					int cardOffsetX = currMouseState.X - card.cardPos.X;
+                    if(topMostcard == card)
+                    {
 
-                    mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+                        if(card.isShowingFace == true || (card.isTopmostCard && card.isShowingFace == false))
+                        {
 
-                    Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
+                            cardBeingInteractedWith = card;
+                            Console.WriteLine($"{card.cardInfo} clicked");
+
+                            int cardOffsetY = currMouseState.Y - card.cardPos.Y;
+                            int cardOffsetX = currMouseState.X - card.cardPos.X;
+
+                            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+
+                            Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
+                        }
+                    }
+
 
                 } else { // assume card is being moved
+
+                    
 
                 }
 
 
-            } else if(isLeftMouseButtonReleased() && cardBeingInteractedWith == card)
+            } else if(isLeftMouseButtonReleased())
             {
 
-                //check for moving
-
-                if(card.isShowingFace)
+                if(cardBeingInteractedWith == card)
                 {
 
-                    if(lastCardInteractedWith == card)
+                    if(card.isShowingFace)
                     {
 
-                        if(clickIsWithinDoubleClickTimeframe())
+                        if(lastCardInteractedWith == card)
                         {
 
-							Console.WriteLine($"{card.cardInfo} was double clicked");
-                            
-                            setClickCooldown();
+                            if(clickIsWithinDoubleClickTimeframe())
+                            {
 
-                            card.callDoubleClickCallback();
+                                Console.WriteLine($"{card.cardInfo} was double clicked");
+                                
+                                setClickCooldown();
+
+                                card.callDoubleClickCallback();
+
+                            } else {
+
+                                lastCardInteractedWith = card;
+
+                            }
 
                         } else {
 
@@ -168,22 +192,18 @@ public class InputManager()
 
                     } else {
 
-                        lastCardInteractedWith = card;
+                        Console.WriteLine($"Turned over card {card.cardInfo} clicked");
+
+                        card.flipCard(true);
+
+                        setClickCooldown();
 
                     }
 
-                } else {
-
-					Console.WriteLine($"Turned over card {card.cardInfo} clicked");
-
-                    card.flipCard(true);
-
-                    setClickCooldown();
+                    cardBeingInteractedWith = null;
+                    lastCardInteractedWith = card;
 
                 }
-
-                cardBeingInteractedWith = null;
-                lastCardInteractedWith = card;
 
             } else {
 

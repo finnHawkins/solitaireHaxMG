@@ -43,7 +43,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
     public delegate void CallbackEventHandler(Card card);
     public event CallbackEventHandler doubleClickCallback;
-    public event CallbackEventHandler clickAndDragCallback;
 
 	public string cardInfo {
 		get {
@@ -151,13 +150,8 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
         if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
         {
-            if(isTopmostCard)
-			{
 
-
-				im.processCardClick(this);
-
-            }
+			im.processCardClick(this);
 
         }
 
@@ -167,11 +161,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	{
 
 		doubleClickCallback?.Invoke(this);
-
-	}
-
-	public void callMoveCallback()
-	{
 
 	}
 

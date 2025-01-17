@@ -26,6 +26,8 @@ public class Game1 : Game
         settings = new SettingsManager(_graphics);
 
         settings.changeResolution(Constants.BASE_WIDTH, Constants.BASE_HEIGHT);
+
+        inputManager.getTopmostCardAtMousePos += new InputManager.CallbackEventHandler(deckManager.getTopmostCardAtMousePos);
     }
 
     protected override void Initialize()
