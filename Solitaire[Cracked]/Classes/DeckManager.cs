@@ -17,6 +17,8 @@ public class DeckManager() {
     private Foundation drawPile = new(stackType.drawPile, 0);
     private Foundation discardPile = new(stackType.discardPile, 0);
 
+    private List<Card> movingCards;
+
     private Dictionary<Card, CardStackBase> lookupTable = new();
 
     public void Initialize(GraphicsDevice gd)
@@ -171,13 +173,14 @@ public class DeckManager() {
 		
 	}
 
-    /// <summary>
-    /// Shuffles the deck.
-    /// </summary>
+	/// <summary>
+	/// Shuffles the deck.
+	/// TODO - https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle -- use this maybe
+	/// </summary>
 	private void shuffleDeck()
 	{
-		Random rng = new();
-		deck = deck.OrderBy(_ => rng.Next()).ToList();
+        Random rng = new();
+        deck = deck.OrderBy(_ => rng.Next()).ToList();
 
 		//logging shuffled deck
 		// foreach(Card card in deck)
@@ -253,7 +256,7 @@ public class DeckManager() {
 
     }
 
-        public void resetDepotTopmostCardFlags()
+    public void resetDepotTopmostCardFlags()
     {
         foreach (var depot in depots)
         {
