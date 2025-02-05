@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Solitaire_Cracked_;
 
 public class InputManager()
 {
@@ -19,6 +20,9 @@ public class InputManager()
 
     Card lastCardInteractedWith;
     Card cardBeingInteractedWith;
+
+    Vector2 mousePositionOnClick;
+    Vector2 mouseOffsetOnClick;
 
     public delegate Card CallbackEventHandler(Vector2 mousePos, Card invokingCard);
     public event CallbackEventHandler getTopmostCardAtMousePos;
@@ -43,6 +47,10 @@ public class InputManager()
         if(isLeftMouseButtonReleased())
         {
             lastClickTime = gameTime.TotalGameTime;
+
+            //TODO - process letting go of card
+
+
         }
 
         prevMouseState = currMouseState;
@@ -52,7 +60,10 @@ public class InputManager()
 
         if(cardBeingInteractedWith != null)
         {
-            Console.WriteLine($"Interacting with card {cardBeingInteractedWith.cardInfo}");
+            //Console.WriteLine($"Interacting with card {cardBeingInteractedWith.cardInfo}");
+
+            //TODO - move card
+
         }
 
     }
@@ -150,16 +161,34 @@ public class InputManager()
                             int cardOffsetY = currMouseState.Y - card.cardPos.Y;
                             int cardOffsetX = currMouseState.X - card.cardPos.X;
 
-                            // mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+                            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+
+                            mousePositionOnClick = new Vector2(mousePos.X, mousePos.Y);
 
                             Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
+                            Console.WriteLine($"Mouse pos on click set to x = {mousePositionOnClick.X}, y = {mousePositionOnClick.Y}");
+
+                            card.setCardMoving(true);
+                            card.movingCardPos = card.cardPos;
+                            card.cardLayer = 0;
+
                         }
                     }
 
 
                 } else { // assume card is being moved
 
+                    //var mYdiff = mousePos.Y + mousePositionOnClick.Y;
+                    //var mXdiff = mousePos.X + mousePositionOnClick.X;
 
+                    var newXpos = mousePos.X - mouseOffsetOnClick.X;
+                    var newYpos = mousePos.Y - mouseOffsetOnClick.Y;
+                    
+                    if(cardBeingInteractedWith != null)
+                    {
+                        Console.WriteLine($"Setting card coords to X={newXpos}, Y={newYpos}");
+                        cardBeingInteractedWith.movingCardPos = new Rectangle((int) newXpos, (int) newYpos, Constants.CARD_WIDTH, Constants.CARD_HEIGHT); 
+                    }
 
                 }
 
@@ -209,12 +238,14 @@ public class InputManager()
 
                     cardBeingInteractedWith = null;
                     lastCardInteractedWith = card;
+                    card.setCardMoving(false);
 
                 }
 
             } else {
 
                 cardBeingInteractedWith = null;
+                card.setCardMoving(false);
 
             }
 

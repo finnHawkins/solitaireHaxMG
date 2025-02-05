@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
@@ -461,7 +460,7 @@ public class DeckManager() {
 
         //Console.WriteLine($"Found {applicableCards.Count()} applicable Cards");
 
-        Console.WriteLine($"invoking card Layer = {invokingCard.cardLayer}");
+        //Console.WriteLine($"invoking card Layer = {invokingCard.cardLayer}");
 
         foreach(var card in applicableCards)
         {

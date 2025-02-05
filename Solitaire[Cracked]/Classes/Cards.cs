@@ -107,6 +107,11 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 		isShowingFace = isFacingUp;
 	}
 
+	public void setCardMoving(bool isMoving)
+	{
+		this.isMoving = isMoving;
+	}
+
 	public void LoadContent()
 	{
 
@@ -128,7 +133,7 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 		if(isShowingFace)
 		{
 			_spriteBatch.Draw(texture: cardImg, 
-								destinationRectangle: cardPos, 
+								destinationRectangle: isMoving ? movingCardPos : cardPos, 
 								color: Color.White,
 								layerDepth: cardLayer,
 								rotation: 0,
@@ -150,12 +155,14 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 		var ms = im.getMouseState();
 
-        if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
-        {
+		if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
+		{
+
+			//Console.WriteLine($"Hovering over { cardInfo}");
 
 			im.processCardClick(this);
 
-        }
+		}
 
 	}
 

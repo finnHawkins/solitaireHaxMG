@@ -1,7 +1,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Solitaire_Cracked_;
 
@@ -50,7 +50,23 @@ public class CardStackBase
     }
 
     public virtual void Update(GameTime gameTime)
-    {}
+    {
+
+        var stackBottom = cardPile.Count == 0 ? baseCardPosition.Bottom : cardPile.Last().cardPos.Bottom;
+
+        var stackHeight = baseCardPosition.Top - stackBottom;
+
+        var stackArea = new Rectangle(baseCardPosition.X, baseCardPosition.Y, baseCardPosition.Height, stackHeight);
+
+        var im = Game1.GetInputManager();
+		var ms = im.getMouseState();
+
+        if(stackArea.Contains(new Vector2(ms.X, ms.Y)))
+        {
+            Console.WriteLine($"Mouse hovering over { stackID }");
+        }
+
+    }
 
     public virtual void setCardPositions()
     {
