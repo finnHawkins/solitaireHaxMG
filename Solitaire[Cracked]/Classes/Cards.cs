@@ -147,30 +147,23 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 	}
 
-	public void Update(GameTime gameTime)
-	{
+	// public void Update(GameTime gameTime)
+	// {
 
-		var im = Game1.GetInputManager();
+	// 	var im = Game1.GetInputManager();
 
-		var ms = im.getMouseState();
+	// 	var ms = im.getMouseState();
 
-		if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
-		{
+	// 	if(cardPos.Contains(new Vector2(ms.X, ms.Y)))
+	// 	{
 
-			//Console.WriteLine($"Hovering over { cardInfo}");
+	// 		//Console.WriteLine($"Hovering over { cardInfo}");
 
-			im.processCardClick(this);
+	// 		im.processCardClick(this);
 
-		}
+	// 	}
 
-	}
-
-	public void setCardMoving()
-	{
-
-
-
-	}
+	// }
 
 	public void callDoubleClickCallback()
 	{

@@ -69,10 +69,10 @@ public class DeckManager() {
     public void Update(GameTime gameTime)
     {
 
-        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
-        {
-            entry.Key.Update(gameTime);
-        }
+        // foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
+        // {
+        //     entry.Key.Update(gameTime);
+        // }
 
         foreach (var f in foundations)
         {
@@ -82,8 +82,8 @@ public class DeckManager() {
         drawPile.Update(gameTime);
         discardPile.Update(gameTime);
 
-        if(movingCards.Count > 0)
-            movingCards.ForEach(card => card.Update(gameTime));
+        // if(movingCards.Count > 0)
+        //     movingCards.ForEach(card => card.Update(gameTime));
 
     }
 
@@ -452,27 +452,50 @@ public class DeckManager() {
 
     }
 
-    public Card getTopmostCardAtMousePos(Vector2 mousePos, Card invokingCard)
+    public Card getTopmostCardAtMousePos(Vector2 mousePos)
     {
 
-        var ownerStack = getParentStack(invokingCard);
+        CardStackBase ownerStack = null;
+
+        //find stack mouse is over
+        foreach(var f in foundations)
+        {
+            if(f.getCardRectangle().Contains(mousePos))
+            {
+                ownerStack = f;
+                break;
+            }
+        }
+
+        if(ownerStack == null || ownerStack == default)
+        {
+            foreach(var d in depots)
+            {
+                if(d.getCardRectangle().Contains(mousePos))
+                {
+                    ownerStack = d;
+                    break;
+                }
+            }
+        }
+
+        Card topCard = default;
+
+        //card has not been clicked
+        if(ownerStack == null || ownerStack == default){
+            Console.WriteLine("No cards were clicked");
+            return topCard;
+        }
 
         var applicableCards = ownerStack.cardPile.Where(card => card.isShowingFace == true && card.cardPos.Contains(mousePos.X, mousePos.Y));
 
-        Card topCard = invokingCard;
+        topCard = applicableCards.MaxBy(card => card.cardLayer);
 
-        //Console.WriteLine($"Found {applicableCards.Count()} applicable Cards");
-
-        //Console.WriteLine($"invoking card Layer = {invokingCard.cardLayer}");
-
-        foreach(var card in applicableCards)
-        {
-            if(card.cardLayer < topCard.cardLayer)
-                topCard = card;
-        }
-
-        //Console.WriteLine($"Topmost card beneath mouse is {topCard.cardInfo}");
-
+        if(topCard != default)
+            Console.WriteLine($"Found topmost card {topCard.cardInfo} that was clicked");
+        else
+            Console.WriteLine("No suitable topmost card found");
+    
         return topCard;
 
     }

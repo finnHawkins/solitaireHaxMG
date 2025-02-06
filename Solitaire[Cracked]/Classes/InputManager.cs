@@ -23,7 +23,7 @@ public class InputManager()
 
     Vector2 mouseOffsetOnClick;
 
-    public delegate Card CallbackEventHandler(Vector2 mousePos, Card invokingCard);
+    public delegate Card CallbackEventHandler(Vector2 mousePos);
     public event CallbackEventHandler getTopmostCardAtMousePos;
 
     public void Update(GameTime gameTime)
@@ -43,6 +43,33 @@ public class InputManager()
             shouldRestartGame = true;
         }
 
+        prevMouseState = currMouseState;
+        currMouseState = Mouse.GetState();
+
+        gt = gameTime;
+
+        if(isClickAllowed())
+        {
+
+            if(isLeftMouseButtonDown())
+            {
+
+                //mouse was clicked this frame
+                if(prevMouseState.LeftButton != ButtonState.Pressed)
+                {
+
+                    var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
+                    //get card that is 
+                    var topMostcard = getTopmostCardAtMousePos?.Invoke(mousePos);
+
+
+
+                }
+
+            }
+
+        }
+
         if(isLeftMouseButtonReleased())
         {
             lastClickTime = gameTime.TotalGameTime;
@@ -52,18 +79,13 @@ public class InputManager()
 
         }
 
-        prevMouseState = currMouseState;
-        currMouseState = Mouse.GetState();
+        // if(cardBeingInteractedWith != null)
+        // {
+        //     //Console.WriteLine($"Interacting with card {cardBeingInteractedWith.cardInfo}");
 
-        gt = gameTime;
+        //     //TODO - move card
 
-        if(cardBeingInteractedWith != null)
-        {
-            //Console.WriteLine($"Interacting with card {cardBeingInteractedWith.cardInfo}");
-
-            //TODO - move card
-
-        }
+        // }
 
     }
 
@@ -119,16 +141,6 @@ public class InputManager()
         return gt.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
     }
 
-    public Vector2 getMouseDifferenceSinceLastFrame()
-    {
-
-        int xDiff = currMouseState.X - prevMouseState.X;
-        int yDiff = currMouseState.Y - prevMouseState.Y;
-
-        return new Vector2(xDiff, yDiff);
-        
-    }
-
     public void processCardClick(Card card)
     {
 
@@ -140,7 +152,7 @@ public class InputManager()
 
                 var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
 
-                var topMostcard = getTopmostCardAtMousePos?.Invoke(mousePos, card);
+                var topMostcard = getTopmostCardAtMousePos?.Invoke(mousePos);
 
                 //mouse was clicked this frame
                 if(prevMouseState.LeftButton != ButtonState.Pressed)

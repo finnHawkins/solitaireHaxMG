@@ -50,21 +50,18 @@ public class CardStackBase
     }
 
     public virtual void Update(GameTime gameTime)
+    {}
+
+    public virtual Rectangle getStackArea()
     {
 
         var stackBottom = cardPile.Count == 0 ? baseCardPosition.Bottom : cardPile.Last().cardPos.Bottom;
 
-        var stackHeight = baseCardPosition.Top - stackBottom;
+        var stackHeight = stackBottom - baseCardPosition.Y;
 
         var stackArea = new Rectangle(baseCardPosition.X, baseCardPosition.Y, baseCardPosition.Height, stackHeight);
 
-        var im = Game1.GetInputManager();
-		var ms = im.getMouseState();
-
-        if(stackArea.Contains(new Vector2(ms.X, ms.Y)))
-        {
-            Console.WriteLine($"Mouse hovering over { stackID }");
-        }
+        return stackArea;
 
     }
 
