@@ -29,20 +29,6 @@ public class InputManager()
     public void Update(GameTime gameTime)
     {
 
-        if(shouldRestartGame)
-            shouldRestartGame = false;
-
-        if (Keyboard.GetState().IsKeyDown(Constants.RESTART_GAME_KEY))
-        {
-            isRestartKeyBeingPressed = true;
-        }
-        
-        if(isRestartKeyBeingPressed && Keyboard.GetState().IsKeyUp(Constants.RESTART_GAME_KEY))
-        {
-            isRestartKeyBeingPressed = false;
-            shouldRestartGame = true;
-        }
-
         prevMouseState = currMouseState;
         currMouseState = Mouse.GetState();
 
@@ -86,6 +72,25 @@ public class InputManager()
         //     //TODO - move card
 
         // }
+
+    }
+
+    public void checkForRestarts()
+    {
+
+        if(shouldRestartGame)
+            shouldRestartGame = false;
+
+        if (Keyboard.GetState().IsKeyDown(Constants.RESTART_GAME_KEY))
+        {
+            isRestartKeyBeingPressed = true;
+        }
+        
+        if(isRestartKeyBeingPressed && Keyboard.GetState().IsKeyUp(Constants.RESTART_GAME_KEY))
+        {
+            isRestartKeyBeingPressed = false;
+            shouldRestartGame = true;
+        }
 
     }
 
