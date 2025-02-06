@@ -16,7 +16,7 @@ public class DeckManager() {
     private Foundation drawPile = new(stackType.drawPile, 0);
     private Foundation discardPile = new(stackType.discardPile, 0);
 
-    private List<Card> movingCards;
+    private List<Card> movingCards = new();
 
     private Dictionary<Card, CardStackBase> lookupTable = new();
 
@@ -81,6 +81,9 @@ public class DeckManager() {
 
         drawPile.Update(gameTime);
         discardPile.Update(gameTime);
+
+        if(movingCards.Count > 0)
+            movingCards.ForEach(card => card.Update(gameTime));
 
     }
 
@@ -477,8 +480,7 @@ public class DeckManager() {
     public void SetCardStackToMoving()
     {
 
-        //have moving stack variable storing all cards being moved
-        //for each one, have 
+        
 
 
     }

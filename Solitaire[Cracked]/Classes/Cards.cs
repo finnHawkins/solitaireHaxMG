@@ -97,8 +97,7 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 		}
 	}
 
-
-    /// <summary>
+  /// <summary>
 	/// Flips a card depending on which side should be shown
 	/// </summary>
 	/// <param name="isFacingUp">Boolean declaring whether card should be displayed face up</param>
