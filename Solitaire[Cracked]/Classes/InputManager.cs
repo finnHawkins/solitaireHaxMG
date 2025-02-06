@@ -73,7 +73,9 @@ public class InputManager()
 
             var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
 
-            if(getCardStackAtMousePos?.Invoke(mousePos).stackType == stackType.drawPile)
+            var stackUnderMouse = getCardStackAtMousePos?.Invoke(mousePos);
+
+            if(stackUnderMouse != null && stackUnderMouse.stackType == stackType.drawPile)
             {
 
                 drawPileClicked?.Invoke();

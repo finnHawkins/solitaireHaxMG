@@ -65,25 +65,7 @@ public class DeckManager() {
     }
 
     public void Update(GameTime gameTime)
-    {
-
-        // foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
-        // {
-        //     entry.Key.Update(gameTime);
-        // }
-
-        foreach (var f in foundations)
-        {
-            f.Update(gameTime);
-        }
-
-        //drawPile.Update(gameTime);
-        //discardPile.Update(gameTime);
-
-        // if(movingCards.Count > 0)
-        //     movingCards.ForEach(card => card.Update(gameTime));
-
-    }
+    {}
 
     public void Draw()
     {
