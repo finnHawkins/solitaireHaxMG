@@ -34,8 +34,6 @@ public class DeckManager() {
             foundations.Add(new Foundation(stackType.foundation, i));
         }
 
-        drawPile.Callback += new Foundation.CallbackEventHandler(onDrawPileClicked);
-
         graphics = gd;
 
         generateDeck();
@@ -79,8 +77,8 @@ public class DeckManager() {
             f.Update(gameTime);
         }
 
-        drawPile.Update(gameTime);
-        discardPile.Update(gameTime);
+        //drawPile.Update(gameTime);
+        //discardPile.Update(gameTime);
 
         // if(movingCards.Count > 0)
         //     movingCards.ForEach(card => card.Update(gameTime));
@@ -452,7 +450,7 @@ public class DeckManager() {
 
     }
 
-    public Card getTopmostCardAtMousePos(Vector2 mousePos)
+    public CardStackBase getStackAtMousePos(Vector2 mousePos)
     {
 
         CardStackBase ownerStack = null;
@@ -479,6 +477,26 @@ public class DeckManager() {
             }
         }
 
+        if(ownerStack == null || ownerStack == default)
+        {
+            if(discardPile.getCardRectangle().Contains(mousePos))
+            {
+                ownerStack = discardPile;
+
+            } else if(drawPile.getCardRectangle().Contains(mousePos))
+            {
+                ownerStack = drawPile;
+            }
+        }
+
+        return ownerStack;
+
+    }
+    public Card getTopmostCardAtMousePos(Vector2 mousePos)
+    {
+
+        CardStackBase ownerStack = getStackAtMousePos(mousePos);
+
         Card topCard = default;
 
         //card has not been clicked
@@ -500,10 +518,12 @@ public class DeckManager() {
 
     }
 
-    public void SetCardStackToMoving()
+    public void SetCardStackToMoving(Card parentCard)
     {
 
-        
+        var ownerStack = getParentStack(parentCard);
+
+
 
 
     }

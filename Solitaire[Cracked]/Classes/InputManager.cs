@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Solitaire_Cracked_;
@@ -23,8 +24,14 @@ public class InputManager()
 
     Vector2 mouseOffsetOnClick;
 
-    public delegate Card CallbackEventHandler(Vector2 mousePos);
-    public event CallbackEventHandler getTopmostCardAtMousePos;
+    public delegate Card GetTopMostCardCallbackHandler(Vector2 mousePos);
+    public event GetTopMostCardCallbackHandler getTopmostCardAtMousePos;
+
+    public delegate CardStackBase GetCardStackAtMousePosCallbackHandler(Vector2 mousePos);
+    public event GetCardStackAtMousePosCallbackHandler getCardStackAtMousePos;
+
+    public delegate void DrawPileClickCallbackHandler();
+    public event DrawPileClickCallbackHandler drawPileClicked;
 
     public void Update(GameTime gameTime)
     {
@@ -45,10 +52,15 @@ public class InputManager()
                 {
 
                     var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
-                    //get card that is 
+
                     var topMostcard = getTopmostCardAtMousePos?.Invoke(mousePos);
 
+                    cardBeingInteractedWith = topMostcard;
 
+                } else {
+
+                    if(cardBeingInteractedWith != null)
+                        Console.WriteLine($"Moving card {cardBeingInteractedWith.cardInfo}");
 
                 }
 
@@ -58,20 +70,23 @@ public class InputManager()
 
         if(isLeftMouseButtonReleased())
         {
+
+            var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
+
+            if(getCardStackAtMousePos?.Invoke(mousePos).stackType == stackType.drawPile)
+            {
+
+                drawPileClicked?.Invoke();
+
+            }
+
             lastClickTime = gameTime.TotalGameTime;
+            cardBeingInteractedWith = null;
 
             //TODO - process letting go of card
 
 
         }
-
-        // if(cardBeingInteractedWith != null)
-        // {
-        //     //Console.WriteLine($"Interacting with card {cardBeingInteractedWith.cardInfo}");
-
-        //     //TODO - move card
-
-        // }
 
     }
 

@@ -27,7 +27,9 @@ public class Game1 : Game
 
         settings.changeResolution(Constants.BASE_WIDTH, Constants.BASE_HEIGHT);
 
-        inputManager.getTopmostCardAtMousePos += new InputManager.CallbackEventHandler(deckManager.getTopmostCardAtMousePos);
+        inputManager.getTopmostCardAtMousePos += new InputManager.GetTopMostCardCallbackHandler(deckManager.getTopmostCardAtMousePos);
+        inputManager.getCardStackAtMousePos += new InputManager.GetCardStackAtMousePosCallbackHandler(deckManager.getStackAtMousePos);
+        inputManager.drawPileClicked += new InputManager.DrawPileClickCallbackHandler(deckManager.onDrawPileClicked);
     }
 
     protected override void Initialize()
@@ -49,7 +51,6 @@ public class Game1 : Game
 
         deckManager.LoadContent();
 
-        // TODO: use this.Content to load your game content here
     }
 
     protected override void Update(GameTime gameTime)

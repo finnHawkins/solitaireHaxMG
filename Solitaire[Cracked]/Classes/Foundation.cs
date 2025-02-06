@@ -6,9 +6,6 @@ using Solitaire_Cracked_;
 public class Foundation : CardStackBase
 {
     
-    public delegate void CallbackEventHandler();
-    public event CallbackEventHandler Callback; 
-
     protected bool isClicked;
 	
 	public Foundation(stackType sType, int stackCount)
@@ -22,37 +19,5 @@ public class Foundation : CardStackBase
 		cardPile = new List<Card>();
 		
 	}
-
-
-    public override void Update(GameTime gameTime) {
-
-        var im = Game1.GetInputManager();
-        var ms = im.getMouseState();
-
-        if(baseCardPosition.Contains(new Vector2(ms.X, ms.Y)))
-        {
-
-            if(im.isLeftMouseButtonDown())
-            {
-                isClicked = true;
-
-            } else if (im.isLeftMouseButtonReleased() && isClicked)
-            {
-
-                if(stackType == stackType.drawPile)
-                {
-                    if (Callback != null)
-                        Callback();
-                }
-
-                isClicked = false;
-                
-            }
-
-        }
-
-        base.Update(gameTime);
-
-    }
 	
 }
