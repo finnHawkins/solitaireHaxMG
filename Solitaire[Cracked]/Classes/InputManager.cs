@@ -125,10 +125,13 @@ public class InputManager(DeckManager dm)
                         if(clickIsWithinDoubleClickTimeframe())
                         {
 
+                            //check how far it's moved; if it's more than a card's size, ignore the double click
+
                             Console.WriteLine($"{cardBeingInteractedWith.cardInfo} was double clicked");
                             
                             setClickCooldown();
 
+                            deckManager.dropCardStack();
                             deckManager.sendCardToFoundation(cardBeingInteractedWith);
 
                         } else {
