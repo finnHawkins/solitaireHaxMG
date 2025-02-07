@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using Microsoft.Xna.Framework;
@@ -574,7 +575,7 @@ public class DeckManager() {
         //var overlappingFoundations = foundations.Where(s => s.getStackArea().Intersects(topCard.movingCardPos));
         //var overlappingDepots = depots.Where(s => s.getStackArea().Intersects(topCard.movingCardPos));
 
-        var cardTopLeftCorner = new Vector2(topCard.movingCardPos.X, topCard.movingCardPos.Y);
+        var cardTopLeftCorner = new Point(topCard.movingCardPos.X, topCard.movingCardPos.Y);
 
         var overlappingFoundations = foundations.Where(s => s.getStackArea().Contains(cardTopLeftCorner));
         var overlappingDepots = depots.Where(s => s.getStackArea().Contains(cardTopLeftCorner));
@@ -591,17 +592,7 @@ public class DeckManager() {
         } else {
 
             //find the one closer to the left edge of the mouse
-            if(overlappingDepots.Count() > 1)
-            {
-
-                Console.WriteLine("Multiple overlapping depots found, shoud not be the case");
-
-                foreach(var c in movingCards)
-                {
-                    c.movingCardPos = c.cardPos;
-                }
-
-            } else if (overlappingDepots.Count() == 1)
+            if (overlappingDepots.Count() >= 1)
             {
 
                 var newOwner = overlappingDepots.First();
@@ -610,17 +601,7 @@ public class DeckManager() {
                 newOwner.setCardPositions();
                 newOwner.updateCardLayers();
 
-            } else if(overlappingFoundations.Count() > 1)
-            {
-
-                Console.WriteLine("Multiple overlapping foundations found, shoud not be the case");
-
-                foreach(var c in movingCards)
-                {
-                    c.movingCardPos = c.cardPos;
-                }
-
-            } else if (overlappingFoundations.Count() == 1)
+            } else if (overlappingFoundations.Count() >= 1)
             {
 
                 var newOwner = overlappingFoundations.First();
@@ -652,9 +633,13 @@ public class DeckManager() {
     public void moveCardsToStack(CardStackBase newOwningStack)
     {
 
-        var stackBottomCard = newOwningStack.cardPile?.Last();
+        Card stackBottomCard = default;
 
-        var movingTopCard = movingCards.First();
+        if(newOwningStack.cardPile.Count != 0) {
+			stackBottomCard = newOwningStack.cardPile.Last();
+		}
+
+		var movingTopCard = movingCards.First();
 
         if(stackBottomCard != null || stackBottomCard != default)
         {
@@ -684,6 +669,8 @@ public class DeckManager() {
                         
                     }
 
+                    oldOwner.cardPile.RemoveAll(x => newList.Contains(x));
+
                 } else {
 
                     //invalid move, skip
@@ -695,7 +682,7 @@ public class DeckManager() {
         } else {
 
             //valid move
-            if(movingTopCard.rank == 13)
+            if(movingTopCard.rank == 13 && newOwningStack.stackType == stackType.depot)
             {
                 //remove cards from original stack
                 //add cards to new stack
@@ -709,10 +696,36 @@ public class DeckManager() {
                 foreach (var card in newList)
                 {
 
-                    newOwningStack.cardPile.Add(card);
+					card.movingCardPos = newOwningStack.baseCardPosition;
+					newOwningStack.cardPile.Add(card);
                     lookupTable[card] = newOwningStack;
                     
                 }
+
+                oldOwner.cardPile.RemoveAll(x => newList.Contains(x));
+
+            } else if (newOwningStack.stackType == stackType.foundation && movingCards.Count == 1 && movingCards[0].rank == 1)
+            {
+
+                //remove cards from original stack
+                //add cards to new stack
+                //update lookup table
+                var oldOwner = getCardOwnerStack(movingCards[0]);
+
+                var cardIndex = oldOwner.cardPile.FindIndex(card => card == movingCards[0]);
+
+                var newList = oldOwner.cardPile.GetRange(cardIndex, oldOwner.cardPile.Count - 1);
+
+                foreach (var card in newList)
+                {
+
+					card.movingCardPos = newOwningStack.baseCardPosition;
+					newOwningStack.cardPile.Add(card);
+                    lookupTable[card] = newOwningStack;
+                    
+                }
+
+                oldOwner.cardPile.RemoveAll(x => newList.Contains(x));
 
             }
 
