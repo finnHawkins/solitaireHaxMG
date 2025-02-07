@@ -88,6 +88,7 @@ public class DeckManager() {
         {
             cardEntry.Key.flipCard(false);
             cardEntry.Key.cardLayer = 0;
+            cardEntry.Key.isTopmostCard = false;
             deck.Add(cardEntry.Key);
         }
 
@@ -148,7 +149,6 @@ public class DeckManager() {
 			{
 				//create new card using rank and suit and add it to the deck
 				var card = new Card((Suit)i, j, graphics);
-                card.doubleClickCallback += new Card.CallbackEventHandler(sendCardToFoundation);
 				deck.Add(card);
 			}
 		}
@@ -303,7 +303,7 @@ public class DeckManager() {
 
     #endregion
     
-    #region Event Handlers
+    #region Input Events
 
     public void onDrawPileClicked()
     {
@@ -474,6 +474,7 @@ public class DeckManager() {
         return ownerStack;
 
     }
+    
     public Card getTopmostCardAtMousePos(Vector2 mousePos)
     {
 
@@ -487,9 +488,9 @@ public class DeckManager() {
             return topCard;
         }
 
-        var applicableCards = ownerStack.cardPile.Where(card => card.isShowingFace == true && card.cardPos.Contains(mousePos.X, mousePos.Y));
+        var applicableCards = ownerStack.cardPile.Where(card => card.cardPos.Contains(mousePos.X, mousePos.Y));
 
-        topCard = applicableCards.MaxBy(card => card.cardLayer);
+        topCard = applicableCards.MinBy(card => card.cardLayer);
 
         if(topCard != default)
             Console.WriteLine($"Found topmost card {topCard.cardInfo} that was clicked");
@@ -500,11 +501,23 @@ public class DeckManager() {
 
     }
 
+    public CardStackBase getCardOwnerStack(Card card)
+    {
+
+        var cardEntry = lookupTable[card];
+
+        return cardEntry;
+
+    }
+
     public void SetCardStackToMoving(Card parentCard)
     {
 
         var ownerStack = getParentStack(parentCard);
 
+        //get index of parentCard
+        //add all cards after and including that index to moving
+        //set them to moving
 
 
 

@@ -4,8 +4,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Solitaire_Cracked_;
 
-public class InputManager()
+public class InputManager(DeckManager dm)
 {
+
+    public DeckManager deckManager = dm;
 
     bool isRestartKeyBeingPressed;
 
@@ -24,17 +26,10 @@ public class InputManager()
 
     Vector2 mouseOffsetOnClick;
 
-    public delegate Card GetTopMostCardCallbackHandler(Vector2 mousePos);
-    public event GetTopMostCardCallbackHandler getTopmostCardAtMousePos;
-
-    public delegate CardStackBase GetCardStackAtMousePosCallbackHandler(Vector2 mousePos);
-    public event GetCardStackAtMousePosCallbackHandler getCardStackAtMousePos;
-
-    public delegate void DrawPileClickCallbackHandler();
-    public event DrawPileClickCallbackHandler drawPileClicked;
-
     public void Update(GameTime gameTime)
     {
+
+        checkForRestarts();
 
         prevMouseState = currMouseState;
         currMouseState = Mouse.GetState();
@@ -53,9 +48,32 @@ public class InputManager()
 
                     var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
 
-                    var topMostcard = getTopmostCardAtMousePos?.Invoke(mousePos);
+                    var topMostcard = deckManager.getTopmostCardAtMousePos(mousePos);
 
                     cardBeingInteractedWith = topMostcard;
+
+                    if(cardBeingInteractedWith != null && cardBeingInteractedWith.isShowingFace)
+                    {
+
+                        int cardOffsetX, cardOffsetY;
+
+                        if(topMostcard != null)
+                        {
+                            cardOffsetY = currMouseState.Y - topMostcard.cardPos.Y;
+                            cardOffsetX = currMouseState.X - topMostcard.cardPos.X;
+                            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+                            Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
+
+                        }
+
+                        //process moving in deckmanager
+
+                    } else {
+
+                        if(!cardBeingInteractedWith.isTopmostCard)
+                            cardBeingInteractedWith = null;
+
+                    }
 
                 } else {
 
@@ -73,20 +91,61 @@ public class InputManager()
 
             var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
 
-            var stackUnderMouse = getCardStackAtMousePos?.Invoke(mousePos);
+            //Check if draw pile got clicked
+            var stackUnderMouse = deckManager.getStackAtMousePos(mousePos);
 
             if(stackUnderMouse != null && stackUnderMouse.stackType == stackType.drawPile)
             {
 
-                drawPileClicked?.Invoke();
+                if(cardBeingInteractedWith == null)
+                    deckManager.onDrawPileClicked();
 
             }
 
-            lastClickTime = gameTime.TotalGameTime;
-            cardBeingInteractedWith = null;
+            if(cardBeingInteractedWith != null)
+            {
+                //check for double click
+                if(cardBeingInteractedWith.isShowingFace)
+                {
 
-            //TODO - process letting go of card
+                    if(lastCardInteractedWith == cardBeingInteractedWith)
+                    {
 
+                        if(clickIsWithinDoubleClickTimeframe())
+                        {
+
+                            Console.WriteLine($"{cardBeingInteractedWith.cardInfo} was double clicked");
+                            
+                            setClickCooldown();
+
+                            deckManager.sendCardToFoundation(cardBeingInteractedWith);
+
+                        } else {
+
+                            lastCardInteractedWith = cardBeingInteractedWith;
+
+                        }
+
+                    } else {
+
+                        lastCardInteractedWith = cardBeingInteractedWith;
+
+                    }
+
+                } else {
+
+                    Console.WriteLine($"Turned over card {cardBeingInteractedWith.cardInfo} clicked");
+
+                    cardBeingInteractedWith.flipCard(true);
+
+                    setClickCooldown();
+
+                }
+
+                lastCardInteractedWith = cardBeingInteractedWith;
+                cardBeingInteractedWith = null;
+                lastClickTime = gameTime.TotalGameTime;
+            }
 
         }
 
@@ -119,23 +178,15 @@ public class InputManager()
     public bool isLeftMouseButtonDown()
     {
 
-        if(currMouseState.LeftButton == ButtonState.Pressed)
-        {
-            return true;
-        }
-
-        return false;
+        return currMouseState.LeftButton == ButtonState.Pressed;
+        
     }
 
     public bool isLeftMouseButtonReleased()
     {
 
-        if(currMouseState.LeftButton == ButtonState.Released && prevMouseState.LeftButton == ButtonState.Pressed)
-        {
-            return true;
-        }
+        return currMouseState.LeftButton == ButtonState.Released && prevMouseState.LeftButton == ButtonState.Pressed;
 
-        return false;
     }
 
     public bool isClickAllowed()
@@ -147,8 +198,10 @@ public class InputManager()
 
     public bool isExitGameButtonDown()
     {
+
         //GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Constants.END_GAME_KEY);
         return Keyboard.GetState().IsKeyDown(Constants.END_GAME_KEY);
+
     }
 
     public void setClickCooldown()
@@ -160,7 +213,9 @@ public class InputManager()
 
     public bool clickIsWithinDoubleClickTimeframe()
     {
+
         return gt.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
+        
     }
 
     public void processCardClick(Card card)
@@ -174,7 +229,7 @@ public class InputManager()
 
                 var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
 
-                var topMostcard = getTopmostCardAtMousePos?.Invoke(mousePos);
+                var topMostcard = deckManager.getTopmostCardAtMousePos(mousePos);
 
                 //mouse was clicked this frame
                 if(prevMouseState.LeftButton != ButtonState.Pressed)
@@ -186,17 +241,6 @@ public class InputManager()
                         //topmost card check for flipped cards
                         if(card.isShowingFace == true || card.isTopmostCard)
                         {
-
-                            cardBeingInteractedWith = card;
-                            Console.WriteLine($"{card.cardInfo} clicked");
-
-                            //think this should be the other way round
-                            int cardOffsetY = currMouseState.Y - card.cardPos.Y;
-                            int cardOffsetX = currMouseState.X - card.cardPos.X;
-
-                            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
-
-                            Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
 
                             card.setCardMoving(true);
                             card.movingCardPos = card.cardPos;
@@ -240,7 +284,7 @@ public class InputManager()
                                 
                                 setClickCooldown();
 
-                                card.callDoubleClickCallback();
+                                //card.callDoubleClickCallback();
 
                             } else {
 

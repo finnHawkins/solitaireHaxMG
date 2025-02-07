@@ -13,7 +13,7 @@ public class Game1 : Game
 
     private static SettingsManager settings;
     private DeckManager deckManager = new();
-    private static InputManager inputManager = new();
+    private static InputManager inputManager;
     
     public Game1()
     {
@@ -25,11 +25,10 @@ public class Game1 : Game
 
         settings = new SettingsManager(_graphics);
 
+        inputManager = new InputManager(deckManager);
+
         settings.changeResolution(Constants.BASE_WIDTH, Constants.BASE_HEIGHT);
 
-        inputManager.getTopmostCardAtMousePos += new InputManager.GetTopMostCardCallbackHandler(deckManager.getTopmostCardAtMousePos);
-        inputManager.getCardStackAtMousePos += new InputManager.GetCardStackAtMousePosCallbackHandler(deckManager.getStackAtMousePos);
-        inputManager.drawPileClicked += new InputManager.DrawPileClickCallbackHandler(deckManager.onDrawPileClicked);
     }
 
     protected override void Initialize()
