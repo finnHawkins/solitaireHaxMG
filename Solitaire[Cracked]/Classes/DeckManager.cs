@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
@@ -482,7 +483,7 @@ public class DeckManager() {
 
         if(ownerStack?.stackType == stackType.discardPile)
         {
-            return ownerStack.cardPile.Last();
+            return ownerStack.cardPile.Count == 0 ? default : ownerStack.cardPile.Last();
         }
 
         Card topCard = default;
@@ -509,22 +510,63 @@ public class DeckManager() {
     public CardStackBase getCardOwnerStack(Card card)
     {
 
-        var cardEntry = lookupTable[card];
-
-        return cardEntry;
+        return lookupTable[card];
 
     }
 
-    public void SetCardStackToMoving(Card parentCard)
+    public void setCardStackToMoving(Card parentCard)
     {
 
         var ownerStack = getParentStack(parentCard);
+
+        var cardIndex = ownerStack.cardPile.FindIndex(card => card == parentCard);
 
         //get index of parentCard
         //add all cards after and including that index to moving
         //set them to moving
 
+        for(int i = cardIndex; i < ownerStack.cardPile.Count; i++){
+            var card = ownerStack.cardPile[i];
 
+            Console.WriteLine($"Adding {card.cardInfo} to moving stack");
+
+            card.setCardMoving(true);
+            card.movingCardPos = card.cardPos;
+
+            movingCards.Add(card);
+
+        }
+
+
+    }
+
+    public void moveCards(Vector2 newCardPos)
+    {
+
+        Console.WriteLine("Moving card stack");
+
+        foreach (var c in movingCards)
+        {
+            c.movingCardPos.X = (int) newCardPos.X;
+            c.movingCardPos.Y = (int) newCardPos.Y;
+
+        }
+        
+
+    }
+
+    public void dropCardStack()
+    {
+
+        Console.WriteLine("Dropping card stack");
+
+        foreach(var c in movingCards)
+        {
+            c.setCardMoving(false);
+            c.cardPos = c.movingCardPos;
+        }
+
+        movingCards.Clear();
 
     }
 

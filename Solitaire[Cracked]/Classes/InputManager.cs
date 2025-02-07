@@ -65,6 +65,8 @@ public class InputManager(DeckManager dm)
                             mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
                             Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
 
+                            deckManager.setCardStackToMoving(cardBeingInteractedWith);
+
                         }
 
                         //process moving in deckmanager
@@ -79,7 +81,15 @@ public class InputManager(DeckManager dm)
                 } else {
 
                     if(cardBeingInteractedWith != null)
-                        Console.WriteLine($"Moving card {cardBeingInteractedWith.cardInfo}");
+                    {
+                        var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
+
+                        var newXpos = mousePos.X - mouseOffsetOnClick.X;
+                        var newYpos = mousePos.Y - mouseOffsetOnClick.Y;
+                        
+                        deckManager.moveCards(new Vector2(newXpos, newYpos));
+
+                    }
 
                 }
 
@@ -225,6 +235,8 @@ public class InputManager(DeckManager dm)
         Console.WriteLine($"Processing {cardBeingInteractedWith.cardInfo} drop");
 
         lastCardInteractedWith = cardBeingInteractedWith;
+
+        deckManager.dropCardStack();
 
     }
 
