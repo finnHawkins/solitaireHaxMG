@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -70,7 +71,7 @@ public class InputManager(DeckManager dm)
 
                     } else {
 
-                        if(!cardBeingInteractedWith.isTopmostCard)
+                        if(cardBeingInteractedWith?.isTopmostCard == false)
                             cardBeingInteractedWith = null;
 
                     }
@@ -122,13 +123,13 @@ public class InputManager(DeckManager dm)
 
                         } else {
 
-                            lastCardInteractedWith = cardBeingInteractedWith;
+                            processCardDrop();
 
                         }
 
                     } else {
 
-                        lastCardInteractedWith = cardBeingInteractedWith;
+                        processCardDrop();
 
                     }
 
@@ -218,110 +219,12 @@ public class InputManager(DeckManager dm)
         
     }
 
-    public void processCardClick(Card card)
+    public void processCardDrop()
     {
 
-        if(isClickAllowed())
-        {
+        Console.WriteLine($"Processing {cardBeingInteractedWith.cardInfo} drop");
 
-            if(isLeftMouseButtonDown())
-            {
-
-                var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
-
-                var topMostcard = deckManager.getTopmostCardAtMousePos(mousePos);
-
-                //mouse was clicked this frame
-                if(prevMouseState.LeftButton != ButtonState.Pressed)
-                {
-
-                    if(topMostcard == card)
-                    {
-
-                        //topmost card check for flipped cards
-                        if(card.isShowingFace == true || card.isTopmostCard)
-                        {
-
-                            card.setCardMoving(true);
-                            card.movingCardPos = card.cardPos;
-                            card.cardLayer = 0;
-
-                        }
-                    }
-
-
-                } else { // assume card is being moved
-                    
-                    if(cardBeingInteractedWith != null)
-                    {
-                        
-                        var newXpos = mousePos.X - mouseOffsetOnClick.X;
-                        var newYpos = mousePos.Y - mouseOffsetOnClick.Y;
-                        
-                        Console.WriteLine($"Setting card coords to X={newXpos}, Y={newYpos}");
-                        cardBeingInteractedWith.movingCardPos = new Rectangle((int) newXpos, (int) newYpos, Constants.CARD_WIDTH, Constants.CARD_HEIGHT); 
-                    }
-
-                }
-
-
-            } else if(isLeftMouseButtonReleased())
-            {
-
-                if(cardBeingInteractedWith == card)
-                {
-
-                    if(card.isShowingFace)
-                    {
-
-                        if(lastCardInteractedWith == card)
-                        {
-
-                            if(clickIsWithinDoubleClickTimeframe())
-                            {
-
-                                Console.WriteLine($"{card.cardInfo} was double clicked");
-                                
-                                setClickCooldown();
-
-                                //card.callDoubleClickCallback();
-
-                            } else {
-
-                                lastCardInteractedWith = card;
-
-                            }
-
-                        } else {
-
-                            lastCardInteractedWith = card;
-
-                        }
-
-                    } else {
-
-                        Console.WriteLine($"Turned over card {card.cardInfo} clicked");
-
-                        card.flipCard(true);
-
-                        setClickCooldown();
-
-                    }
-
-                    cardBeingInteractedWith = null;
-                    lastCardInteractedWith = card;
-                    card.setCardMoving(false);
-
-                }
-
-            } else {
-
-                cardBeingInteractedWith = null;
-                card.setCardMoving(false);
-
-            }
-
-        }
+        lastCardInteractedWith = cardBeingInteractedWith;
 
     }
 

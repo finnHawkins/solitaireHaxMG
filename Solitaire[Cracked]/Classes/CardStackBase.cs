@@ -125,7 +125,11 @@ public class CardStackBase
             } else {
                 card.cardLayer = 0;
             }
+            card.isTopmostCard = false;
         }
+
+        if(cardPile.Count > 0)
+            cardPile.Last().isTopmostCard = true;
 
     }
 

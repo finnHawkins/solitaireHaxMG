@@ -480,6 +480,11 @@ public class DeckManager() {
 
         CardStackBase ownerStack = getStackAtMousePos(mousePos);
 
+        if(ownerStack?.stackType == stackType.discardPile)
+        {
+            return ownerStack.cardPile.Last();
+        }
+
         Card topCard = default;
 
         //card has not been clicked
