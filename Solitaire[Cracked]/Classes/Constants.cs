@@ -27,4 +27,6 @@ public class Constants {
     public const int BASE_WIDTH = 640;
     public const int BASE_HEIGHT = 360;
 
+    public const int CARD_LAYER_OFFSET = 13;
+
 }

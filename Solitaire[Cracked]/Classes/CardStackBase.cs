@@ -29,6 +29,18 @@ public class CardStackBase
         }
     }
 
+    public CardStackBase(stackType sType, int stackCount)
+	{
+
+		stackType = sType;
+		stackCounter = stackCount;
+
+		baseCardPosition = getCardRectangle();
+
+		cardPile = new List<Card>();
+		
+	}
+
     public virtual void LoadContent()
     {
 
@@ -60,6 +72,8 @@ public class CardStackBase
         var stackHeight = stackBottom - baseCardPosition.Y;
 
         var stackArea = new Rectangle(baseCardPosition.X, baseCardPosition.Y, baseCardPosition.Height, stackHeight);
+
+        Console.WriteLine($"{stackID} has a stackArea of: {stackArea}");
 
         return stackArea;
 
