@@ -8,6 +8,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 public class DeckManager() {
 
     GraphicsDevice graphics;
+    SpriteBatch _spriteBatch;
 
     List<Card> deck;
     
@@ -57,7 +58,9 @@ public class DeckManager() {
     public void LoadContent()
     {
 
-        foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
+		_spriteBatch = new SpriteBatch(graphics);
+
+		foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
         {
             entry.Key.LoadContent();
         }
@@ -70,10 +73,14 @@ public class DeckManager() {
     public void Draw()
     {
 
+        _spriteBatch.Begin();
+
         foreach (KeyValuePair<Card, CardStackBase> entry in lookupTable)
         {
-            entry.Key.Draw();
+            entry.Key.Draw(_spriteBatch);
         }
+
+        _spriteBatch.End();
 
     }
 

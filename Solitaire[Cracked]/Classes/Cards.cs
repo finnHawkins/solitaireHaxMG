@@ -35,8 +35,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
     private GraphicsDevice graphicsDevice = gd;
 	private readonly ContentManager content = Game1.GetNewContentManagerInstance();
 
-    private SpriteBatch _spriteBatch;
-
 	public Rectangle cardPos;
 
 	public Rectangle movingCardPos;
@@ -111,8 +109,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	public void LoadContent()
 	{
 
-		_spriteBatch = new SpriteBatch(graphicsDevice);
-
 		cardBack = content.Load<Texture2D>("BACK_RED");
 
 		string cardName = suit.ToString() + "_" + rank;
@@ -121,14 +117,12 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 
 	}
 
-	public void Draw()
+	public void Draw(SpriteBatch spriteBatch)
 	{
-
-		_spriteBatch.Begin();
 
 		if(isShowingFace)
 		{
-			_spriteBatch.Draw(texture: cardImg, 
+			spriteBatch.Draw(texture: cardImg, 
 								destinationRectangle: isMoving ? movingCardPos : cardPos, 
 								color: Color.White,
 								layerDepth: cardLayer,
@@ -137,10 +131,8 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 								effects: SpriteEffects.None,
 								sourceRectangle: null);
 		} else {
-			_spriteBatch.Draw(cardBack, new Vector2(cardPos.X, cardPos.Y), Color.White);
+			spriteBatch.Draw(cardBack, new Vector2(cardPos.X, cardPos.Y), Color.White);
 		}
-
-		_spriteBatch.End();
 
 	}
 

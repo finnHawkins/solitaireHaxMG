@@ -41,25 +41,9 @@ public class CardStackBase
 		
 	}
 
-    public virtual void LoadContent()
-    {
+    public virtual void LoadContent() {}
 
-        foreach(var card in cardPile)
-        {
-            card.LoadContent();
-        }
-
-    }
-
-    public virtual void Draw()
-    {
-
-        foreach(var card in cardPile)
-        {
-            card.Draw();
-        }
-
-    }
+    public virtual void Draw() {}
 
     public virtual void Update(GameTime gameTime)
     {}
