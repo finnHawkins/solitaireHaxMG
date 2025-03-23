@@ -64,9 +64,6 @@ public class Game1 : Game
             deckManager.restartGame();
         }
 
-        // TODO: Add your update logic here
-        deckManager.Update(gameTime);
-
         base.Update(gameTime);
     }
 

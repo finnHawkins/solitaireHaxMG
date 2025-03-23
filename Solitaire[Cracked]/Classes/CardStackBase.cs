@@ -45,8 +45,7 @@ public class CardStackBase
 
     public virtual void Draw() {}
 
-    public virtual void Update(GameTime gameTime)
-    {}
+    public virtual void Update(GameTime gameTime) {}
 
     public virtual Rectangle getStackArea()
     {

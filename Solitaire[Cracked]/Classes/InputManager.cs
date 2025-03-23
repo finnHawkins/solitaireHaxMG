@@ -1,12 +1,15 @@
 using System;
-using System.Reflection;
-using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Solitaire_Cracked_;
 
 public class InputManager(DeckManager dm)
 {
+
+    public enum moveState {
+        click,
+        drag,
+        idle
+    }
 
     public DeckManager deckManager = dm;
 
@@ -15,7 +18,7 @@ public class InputManager(DeckManager dm)
     public bool shouldRestartGame { get; private set; }
 
     public TimeSpan lastClickTime { get; private set; }
-    public TimeSpan nextClickAllowedTime { get; private set; }
+    //public TimeSpan nextClickAllowedTime { get; private set; }
 
     MouseState prevMouseState;
     MouseState currMouseState;
@@ -27,6 +30,11 @@ public class InputManager(DeckManager dm)
 
     Vector2 mouseOffsetOnClick;
 
+    Rectangle mouseDragBorderBox;
+    moveState mouseMoveState;
+
+    TimeSpan doubleClickTimeout;
+
     public void Update(GameTime gameTime)
     {
 
@@ -37,128 +45,128 @@ public class InputManager(DeckManager dm)
 
         gt = gameTime;
 
-        if(isClickAllowed())
+        // if(!isClickAllowed())
+        // {
+        //     return;
+        // }
+
+        if(isLeftMouseButtonDown())
         {
 
-            if(isLeftMouseButtonDown())
+            //mouse was clicked this frame
+            if(prevMouseState.LeftButton != ButtonState.Pressed)
             {
+                mouseMoveState = moveState.click;
 
-                //mouse was clicked this frame
-                if(prevMouseState.LeftButton != ButtonState.Pressed)
+                var borderX = currMouseState.X - Constants.MOUSE_BOUND_BORDER_PIXEL_SIZE;
+                var borderY = currMouseState.Y - Constants.MOUSE_BOUND_BORDER_PIXEL_SIZE;
+                var borderSize = Constants.MOUSE_BOUND_BORDER_PIXEL_SIZE * 2;
+                mouseDragBorderBox = new Rectangle(borderX, borderY, borderSize, borderSize);
+
+                doubleClickTimeout = gt.TotalGameTime.Add(new TimeSpan(0,0,1));
+
+                var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
+
+                var topMostcard = deckManager.getTopmostCardAtMousePos(mousePos);
+
+                cardBeingInteractedWith = topMostcard;
+
+            } else {
+
+                if(mouseMoveState == moveState.click)
                 {
 
-                    var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
-
-                    var topMostcard = deckManager.getTopmostCardAtMousePos(mousePos);
-
-                    cardBeingInteractedWith = topMostcard;
-
-                    if(cardBeingInteractedWith != null && cardBeingInteractedWith.isShowingFace)
+                    if(mouseDragBorderBox.Contains(new Vector2(currMouseState.X, currMouseState.Y)))
                     {
 
-                        int cardOffsetX, cardOffsetY;
-
-                        if(topMostcard != null)
+                        if(gt.TotalGameTime >= doubleClickTimeout)
                         {
-                            cardOffsetY = currMouseState.Y - topMostcard.cardPos.Y;
-                            cardOffsetX = currMouseState.X - topMostcard.cardPos.X;
-                            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
-                            Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
-
-                            deckManager.setCardStackToMoving(cardBeingInteractedWith);
-
+                            mouseMoveState = moveState.drag;
+                            Console.WriteLine("Mouse state set to drag as doubleClickTimeout was met");
                         }
-
-                        //process moving in deckmanager
 
                     } else {
 
-                        if(cardBeingInteractedWith?.isTopmostCard == false)
+                        mouseMoveState = moveState.drag;
+                        Console.WriteLine("Mouse state set to drag as mouse left mouseBoundArea");
+
+                    }
+
+                } else if (mouseMoveState == moveState.drag && cardBeingInteractedWith != null) {
+
+                    //move cards
+                    Console.WriteLine($"Moving card {cardBeingInteractedWith.cardInfo}");
+
+                    //TODO - add moving
+
+                }
+
+            }
+
+        } else {
+
+            if(isLeftMouseButtonReleased())
+            {
+
+                var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
+
+                if(mouseMoveState == moveState.click)
+                {
+
+                    //Check if draw pile got clicked
+                    var stackUnderMouse = deckManager.getStackAtMousePos(mousePos);
+
+                    if(stackUnderMouse != null && stackUnderMouse.stackType == stackType.drawPile)
+                    {
+
+                        if(stackUnderMouse.cardPile.Count == 0 || cardBeingInteractedWith == stackUnderMouse.cardPile[0])
+                        {
+                            deckManager.onDrawPileClicked();
                             cardBeingInteractedWith = null;
-
-                    }
-
-                } else {
-
-                    if(cardBeingInteractedWith != null)
-                    {
-                        var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
-
-                        var newXpos = mousePos.X - mouseOffsetOnClick.X;
-                        var newYpos = mousePos.Y - mouseOffsetOnClick.Y;
-                        
-                        deckManager.moveCards(new Vector2(newXpos, newYpos));
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        if(isLeftMouseButtonReleased())
-        {
-
-            var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
-
-            //Check if draw pile got clicked
-            var stackUnderMouse = deckManager.getStackAtMousePos(mousePos);
-
-            if(stackUnderMouse != null && stackUnderMouse.stackType == stackType.drawPile)
-            {
-
-                if(cardBeingInteractedWith == null)
-                    deckManager.onDrawPileClicked();
-
-            }
-
-            if(cardBeingInteractedWith != null)
-            {
-                //check for double click
-                if(cardBeingInteractedWith.isShowingFace)
-                {
-
-                    if(lastCardInteractedWith == cardBeingInteractedWith)
-                    {
-
-                        if(clickIsWithinDoubleClickTimeframe())
-                        {
-
-                            //check how far it's moved; if it's more than a card's size, ignore the double click
-
-                            Console.WriteLine($"{cardBeingInteractedWith.cardInfo} was double clicked");
-                            
-                            setClickCooldown();
-
-                            deckManager.dropCardStack();
-                            deckManager.sendCardToFoundation(cardBeingInteractedWith);
-
-                        } else {
-
-                            processCardDrop();
-
+                            lastCardInteractedWith = null;
                         }
 
                     } else {
 
-                        processCardDrop();
+                        Console.WriteLine("Processing click in IM");
+
+                        if(cardBeingInteractedWith != null)
+                        {
+                            if(lastCardInteractedWith == cardBeingInteractedWith)
+                            {
+                                if(clickIsWithinDoubleClickTimeframe())
+                                {
+                                    deckManager.sendCardToFoundation(cardBeingInteractedWith);
+                                }
+
+                            } else {
+
+                                if(!cardBeingInteractedWith.isShowingFace)
+                                {
+                                    deckManager.processCardFlip(cardBeingInteractedWith);
+                                }
+
+                            }
+
+                        }
+
+                        //reset variables
+                        lastCardInteractedWith = cardBeingInteractedWith;
+                        cardBeingInteractedWith = null;
 
                     }
 
                 } else {
 
-                    Console.WriteLine($"Turned over card {cardBeingInteractedWith.cardInfo} clicked");
-
-                    cardBeingInteractedWith.flipCard(true);
-
-                    setClickCooldown();
+                    //TODO - process mouse movement and move cards to new stack
+                    if(cardBeingInteractedWith != null)
+                        Console.WriteLine($"Dropping {cardBeingInteractedWith.cardInfo}");
 
                 }
 
-                lastCardInteractedWith = cardBeingInteractedWith;
-                cardBeingInteractedWith = null;
-                lastClickTime = gameTime.TotalGameTime;
+                mouseMoveState = moveState.idle;
+                lastClickTime = gt.TotalGameTime;
+
             }
 
         }
@@ -184,10 +192,6 @@ public class InputManager(DeckManager dm)
 
     }
 
-    public MouseState getMouseState()
-    {
-        return currMouseState;
-    }
 
     public bool isLeftMouseButtonDown()
     {
@@ -203,12 +207,12 @@ public class InputManager(DeckManager dm)
 
     }
 
-    public bool isClickAllowed()
-    {
+    // public bool isClickAllowed()
+    // {
 
-        return gt.TotalGameTime > nextClickAllowedTime;
+    //     return gt.TotalGameTime > nextClickAllowedTime;
 
-    }
+    // }
 
     public bool isExitGameButtonDown()
     {
@@ -218,12 +222,12 @@ public class InputManager(DeckManager dm)
 
     }
 
-    public void setClickCooldown()
-    {
+    // public void setClickCooldown()
+    // {
 
-		nextClickAllowedTime = gt.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
+	// 	nextClickAllowedTime = gt.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
     
-    }
+    // }
 
     public bool clickIsWithinDoubleClickTimeframe()
     {

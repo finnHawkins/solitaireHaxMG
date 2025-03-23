@@ -12,7 +12,7 @@ public enum Suit {
 	S
 }
 
-public class Card(Suit _suit, int _rank, GraphicsDevice gd)
+public class Card(Suit _suit, int _rank)
 {
     public bool isShowingFace { get; private set; }
 
@@ -32,7 +32,6 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 	Texture2D cardImg;
 	Texture2D cardBack;
 
-    private GraphicsDevice graphicsDevice = gd;
 	private readonly ContentManager content = Game1.GetNewContentManagerInstance();
 
 	public Rectangle cardPos;
@@ -123,7 +122,7 @@ public class Card(Suit _suit, int _rank, GraphicsDevice gd)
 		if(isShowingFace)
 		{
 			spriteBatch.Draw(texture: cardImg, 
-								destinationRectangle: isMoving ? movingCardPos : cardPos, 
+								destinationRectangle: cardPos, 
 								color: Color.White,
 								layerDepth: cardLayer,
 								rotation: 0,

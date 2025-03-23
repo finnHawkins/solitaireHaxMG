@@ -29,4 +29,6 @@ public class Constants {
 
     public const int CARD_LAYER_OFFSET = 13;
 
+    public const int MOUSE_BOUND_BORDER_PIXEL_SIZE = 5;
+
 }
