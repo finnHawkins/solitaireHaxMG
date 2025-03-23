@@ -92,7 +92,7 @@ public class InputManager(DeckManager dm)
 
                     }
 
-                } else if (mouseMoveState == moveState.drag && cardBeingInteractedWith != null) {
+                } else if(mouseMoveState == moveState.drag && cardBeingInteractedWith != null) {
 
                     //move cards
                     Console.WriteLine($"Moving card {cardBeingInteractedWith.cardInfo}");
@@ -179,7 +179,7 @@ public class InputManager(DeckManager dm)
         if(shouldRestartGame)
             shouldRestartGame = false;
 
-        if (Keyboard.GetState().IsKeyDown(Constants.RESTART_GAME_KEY))
+        if(Keyboard.GetState().IsKeyDown(Constants.RESTART_GAME_KEY))
         {
             isRestartKeyBeingPressed = true;
         }
@@ -234,17 +234,6 @@ public class InputManager(DeckManager dm)
 
         return gt.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
         
-    }
-
-    public void processCardDrop()
-    {
-
-        Console.WriteLine($"Processing {cardBeingInteractedWith.cardInfo} drop");
-
-        lastCardInteractedWith = cardBeingInteractedWith;
-
-        deckManager.dropCardStack();
-
     }
 
 }

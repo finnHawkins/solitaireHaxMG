@@ -10,6 +10,8 @@ public class DeckManager() {
     GraphicsDevice graphics;
     SpriteBatch _spriteBatch;
 
+    List<Card> deck;
+    
     private List<Depot> depots = [];
     private List<Foundation> foundations = [];
     private Foundation drawPile = new(stackType.drawPile, 0);
@@ -65,6 +67,9 @@ public class DeckManager() {
         
     }
 
+    public void Update(GameTime gameTime)
+    {}
+
     public void Draw()
     {
 
@@ -84,24 +89,20 @@ public class DeckManager() {
 
         Console.WriteLine("Restarting game...");
 
+        deck.Clear();
+
         foreach (KeyValuePair<Card, CardStackBase> cardEntry in lookupTable)
         {
             cardEntry.Key.flipCard(false);
             cardEntry.Key.cardLayer = 0;
             cardEntry.Key.isTopmostCard = false;
-            
-            if(!discardPile.cardPile.Contains(cardEntry.Key))
-            {
-
-                discardPile.cardPile.Add(cardEntry.Key);
-                lookupTable[cardEntry.Key] = discardPile;
-
-            }
+            deck.Add(cardEntry.Key);
         }
 
-        Console.WriteLine("Clearing all piles except discard...");
+        Console.WriteLine("Clearing all previous piles...");
         
         drawPile.cardPile.Clear();
+        discardPile.cardPile.Clear();
 
         foreach (var f in foundations)
         {
@@ -113,6 +114,8 @@ public class DeckManager() {
             d.cardPile.Clear();
         }
 
+        lookupTable.Clear();
+
         Console.WriteLine("Shuffling deck...");
 
         shuffleDeck();
@@ -122,20 +125,16 @@ public class DeckManager() {
         dealDeck();
 
         drawPile.setCardPositions();
-        drawPile.updateCardLayers();
         discardPile.setCardPositions();
-        discardPile.updateCardLayers();
 
         foreach (var f in foundations)
         {
             f.setCardPositions();
-            f.updateCardLayers();
         }
 
         foreach (var d in depots)
         {
             d.setCardPositions();
-            d.updateCardLayers();
         }
 
     }
@@ -146,15 +145,18 @@ public class DeckManager() {
     /// </summary>
     private void generateDeck()
 	{
-		
-        //loop through suits
+		//declare new deck
+		deck = new List<Card>();
+
+		//loop through suits
 		for(int i = 1; i < 5; i++)
 		{
 			//loops through ranks
 			for (int j = 1; j < 14; j++)
 			{
 				//create new card using rank and suit and add it to the deck
-				discardPile.cardPile.Add(new Card((Suit)i, j));
+				var card = new Card((Suit)i, j);
+				deck.Add(card);
 			}
 		}
 		
@@ -166,10 +168,14 @@ public class DeckManager() {
 	/// </summary>
 	private void shuffleDeck()
 	{
-
         Random rng = new();
-        discardPile.cardPile = discardPile.cardPile.OrderBy(_ => rng.Next()).ToList();
+        deck = deck.OrderBy(_ => rng.Next()).ToList();
 
+		//logging shuffled deck
+		// foreach(Card card in deck)
+		// {
+		// 	Console.WriteLine(card.cardInfo);
+		// }
 	}
 
     /// <summary>
@@ -184,18 +190,11 @@ public class DeckManager() {
         {
             for (int i = startingDepot; i < 7; i++)
             {
+                depots[i].cardPile.Add(deck[0]);
 
-                var card = discardPile.cardPile[0];
+                lookupTable.Add(deck[0], depots[i]);
 
-                depots[i].cardPile.Add(card);
-
-                if (lookupTable.ContainsKey(card)) {
-                    lookupTable[card] = depots[i];
-                } else {
-					lookupTable.Add(card, depots[i]);
-				}
-
-				discardPile.cardPile.Remove(card);
+                deck.RemoveAt(0);
             }
 
             depots[startingDepot].cardPile.Last().flipCard(true);
@@ -208,18 +207,12 @@ public class DeckManager() {
 
         resetDepotTopmostCardFlags();
 
-        while (discardPile.cardPile.Count > 0)
+        foreach (var card in deck)
         {
-            var card = discardPile.cardPile[0];
             drawPile.cardPile.Add(card);
-            discardPile.cardPile.Remove(card);
+            lookupTable.Add(card, drawPile);
 
-			if (lookupTable.ContainsKey(card)) {
-				lookupTable[card] = drawPile;
-			} else {
-				lookupTable.Add(card, drawPile);
-			}
-		}
+        }
 
     }
 
@@ -308,7 +301,7 @@ public class DeckManager() {
     {
 
         Console.Write("Deck cards: ");
-        foreach (var card in discardPile.cardPile)
+        foreach (var card in deck)
         {
             Console.Write($"{card.cardInfo},");
         }
