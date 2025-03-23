@@ -54,7 +54,7 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (inputManager.isExitGameButtonDown())
+        if(inputManager.isExitGameButtonDown())
             Exit();
 
         inputManager.Update(gameTime);

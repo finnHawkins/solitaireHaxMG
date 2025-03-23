@@ -1,10 +1,10 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Solitaire_Cracked_;
 
-public enum Suit {
+public enum Suit
+{
 	J = 0,
 	H,
 	C,
@@ -14,10 +14,12 @@ public enum Suit {
 
 public class Card(Suit _suit, int _rank)
 {
-    public bool isShowingFace { get; private set; }
+	public bool isShowingFace { get; private set; }
 
-	bool isJoker {
-		get {
+	bool isJoker
+	{
+		get
+		{
 			return suit == Suit.J;
 		}
 	}
@@ -40,8 +42,10 @@ public class Card(Suit _suit, int _rank)
 
 	public bool isMoving { get; private set; }
 
-	public string cardInfo {
-		get {
+	public string cardInfo
+	{
+		get
+		{
 
 			string cardRank;
 			string cardSuit = "";
@@ -84,14 +88,16 @@ public class Card(Suit _suit, int _rank)
 			return cardRank + " of " + cardSuit;
 		}
 	}
-	
-	public bool isRed {
-		get {
-			return (int)suit%2 == 0;
+
+	public bool isRed
+	{
+		get
+		{
+			return (int)suit % 2 == 0;
 		}
 	}
 
-  /// <summary>
+	/// <summary>
 	/// Flips a card depending on which side should be shown
 	/// </summary>
 	/// <param name="isFacingUp">Boolean declaring whether card should be displayed face up</param>
@@ -116,22 +122,23 @@ public class Card(Suit _suit, int _rank)
 
 	}
 
+	public void resetCard()
+	{
+		isShowingFace = false;
+		cardLayer = 0;
+		isTopmostCard = false;
+	}
+
 	public void Draw(SpriteBatch spriteBatch)
 	{
-
-		if(isShowingFace)
-		{
-			spriteBatch.Draw(texture: cardImg, 
-								destinationRectangle: cardPos, 
+			spriteBatch.Draw(texture: isShowingFace ? cardImg : cardBack,
+								destinationRectangle: cardPos,
 								color: Color.White,
 								layerDepth: cardLayer,
 								rotation: 0,
 								origin: new Vector2(0, 0),
 								effects: SpriteEffects.None,
 								sourceRectangle: null);
-		} else {
-			spriteBatch.Draw(cardBack, new Vector2(cardPos.X, cardPos.Y), Color.White);
-		}
 
 	}
 

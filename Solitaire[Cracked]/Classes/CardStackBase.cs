@@ -113,7 +113,7 @@ public class CardStackBase
 
         int cardLayer = cardPile.Count - 1;
 
-        foreach (var card in cardPile)
+        foreach(var card in cardPile)
         {
             if(stackType == stackType.foundation || stackType == stackType.depot)
             {

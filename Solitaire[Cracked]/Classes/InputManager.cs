@@ -5,7 +5,8 @@ using Microsoft.Xna.Framework.Input;
 public class InputManager(DeckManager dm)
 {
 
-    public enum moveState {
+    public enum moveState
+    {
         click,
         drag,
         idle
@@ -63,7 +64,7 @@ public class InputManager(DeckManager dm)
                 var borderSize = Constants.MOUSE_BOUND_BORDER_PIXEL_SIZE * 2;
                 mouseDragBorderBox = new Rectangle(borderX, borderY, borderSize, borderSize);
 
-                doubleClickTimeout = gt.TotalGameTime.Add(new TimeSpan(0,0,1));
+                doubleClickTimeout = gt.TotalGameTime.Add(new TimeSpan(0, 0, 1));
 
                 var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
 
@@ -82,12 +83,14 @@ public class InputManager(DeckManager dm)
                         if(gt.TotalGameTime >= doubleClickTimeout)
                         {
                             mouseMoveState = moveState.drag;
+                            deckManager.setCardStackToMoving(cardBeingInteractedWith);
                             Console.WriteLine("Mouse state set to drag as doubleClickTimeout was met");
                         }
 
                     } else {
 
                         mouseMoveState = moveState.drag;
+                        deckManager.setCardStackToMoving(cardBeingInteractedWith);
                         Console.WriteLine("Mouse state set to drag as mouse left mouseBoundArea");
 
                     }
@@ -183,7 +186,7 @@ public class InputManager(DeckManager dm)
         {
             isRestartKeyBeingPressed = true;
         }
-        
+
         if(isRestartKeyBeingPressed && Keyboard.GetState().IsKeyUp(Constants.RESTART_GAME_KEY))
         {
             isRestartKeyBeingPressed = false;
@@ -197,7 +200,7 @@ public class InputManager(DeckManager dm)
     {
 
         return currMouseState.LeftButton == ButtonState.Pressed;
-        
+
     }
 
     public bool isLeftMouseButtonReleased()
@@ -225,15 +228,15 @@ public class InputManager(DeckManager dm)
     // public void setClickCooldown()
     // {
 
-	// 	nextClickAllowedTime = gt.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
-    
+    // 	nextClickAllowedTime = gt.TotalGameTime.Add(new TimeSpan(0,0,0,0,Constants.CLICK_DELAY));
+
     // }
 
     public bool clickIsWithinDoubleClickTimeframe()
     {
 
-        return gt.TotalGameTime < lastClickTime.Add(new TimeSpan(0,0,0,0,Constants.DOUBLE_CLICK_TOLERANCE));
-        
+        return gt.TotalGameTime < lastClickTime.Add(new TimeSpan(0, 0, 0, 0, Constants.DOUBLE_CLICK_TOLERANCE));
+
     }
 
 }
