@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 public class DeckManager()
 {
@@ -525,7 +524,6 @@ public class DeckManager()
             movingCards.Add(card);
 
         }
-
 
     }
 

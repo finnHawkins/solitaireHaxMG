@@ -9,7 +9,8 @@ public enum stackType {
     drawPile,
     discardPile,
     foundation,
-    depot
+    depot,
+    movePile
 }
 
 public class CardStackBase

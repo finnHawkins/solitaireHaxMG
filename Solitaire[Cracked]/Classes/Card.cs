@@ -131,7 +131,10 @@ public class Card(Suit _suit, int _rank)
 
 	public void Draw(SpriteBatch spriteBatch)
 	{
-			spriteBatch.Draw(texture: isShowingFace ? cardImg : cardBack,
+
+		if (isShowingFace)
+		{
+			spriteBatch.Draw(texture: cardImg,
 								destinationRectangle: cardPos,
 								color: Color.White,
 								layerDepth: cardLayer,
@@ -139,6 +142,9 @@ public class Card(Suit _suit, int _rank)
 								origin: new Vector2(0, 0),
 								effects: SpriteEffects.None,
 								sourceRectangle: null);
+		} else {
+			spriteBatch.Draw(cardBack, new Vector2(cardPos.X, cardPos.Y), Color.White);
+		}
 
 	}
 
