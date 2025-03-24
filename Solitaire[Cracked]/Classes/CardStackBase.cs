@@ -57,7 +57,7 @@ public class CardStackBase
 
         var stackArea = new Rectangle(baseCardPosition.X, baseCardPosition.Y, baseCardPosition.Height, stackHeight);
 
-        Console.WriteLine($"{stackID} has a stackArea of: {stackArea}");
+        //Console.WriteLine($"{stackID} has a stackArea of: {stackArea}");
 
         return stackArea;
 

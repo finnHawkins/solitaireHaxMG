@@ -82,17 +82,14 @@ public class InputManager(DeckManager dm)
 
                         if(gt.TotalGameTime >= doubleClickTimeout)
                         {
-                            mouseMoveState = moveState.drag;
-                            deckManager.setCardStackToMoving(cardBeingInteractedWith);
-                            Console.WriteLine("Mouse state set to drag as doubleClickTimeout was met");
+
+                            setMouseToDrag();
+
                         }
 
                     } else {
 
-                        mouseMoveState = moveState.drag;
-                        deckManager.setCardStackToMoving(cardBeingInteractedWith);
-                        Console.WriteLine("Mouse state set to drag as mouse left mouseBoundArea");
-
+                        setMouseToDrag();
                     }
 
                 } else if(mouseMoveState == moveState.drag && cardBeingInteractedWith != null) {
@@ -101,7 +98,7 @@ public class InputManager(DeckManager dm)
                     Console.WriteLine($"Moving card {cardBeingInteractedWith.cardInfo}");
 
                     //TODO - add moving
-
+                    updateCardPos();
                 }
 
             }
@@ -163,7 +160,13 @@ public class InputManager(DeckManager dm)
 
                     //TODO - process mouse movement and move cards to new stack
                     if(cardBeingInteractedWith != null)
+                    {
+
                         Console.WriteLine($"Dropping {cardBeingInteractedWith.cardInfo}");
+                        deckManager.dropCardStack();
+
+                    }
+
 
                 }
 
@@ -208,6 +211,32 @@ public class InputManager(DeckManager dm)
 
         return currMouseState.LeftButton == ButtonState.Released && prevMouseState.LeftButton == ButtonState.Pressed;
 
+    }
+
+    public void setMouseToDrag()
+    {
+        mouseMoveState = moveState.drag;
+        deckManager.setCardStackToMoving(cardBeingInteractedWith);
+
+        if(cardBeingInteractedWith != null)
+        {
+            var cardOffsetY = currMouseState.Y - cardBeingInteractedWith.cardPos.Y;
+            var cardOffsetX = currMouseState.X - cardBeingInteractedWith.cardPos.X;
+            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
+            Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");
+        }
+
+        Console.WriteLine("Mouse state set to drag as doubleClickTimeout was met");
+
+    }
+
+    public void updateCardPos()
+    {
+        var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
+        var newXpos = mousePos.X - mouseOffsetOnClick.X;
+        var newYpos = mousePos.Y - mouseOffsetOnClick.Y;
+                        
+        deckManager.moveCards(new Vector2(newXpos, newYpos));
     }
 
     // public bool isClickAllowed()

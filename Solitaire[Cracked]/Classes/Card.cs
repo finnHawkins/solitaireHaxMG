@@ -38,10 +38,6 @@ public class Card(Suit _suit, int _rank)
 
 	public Rectangle cardPos;
 
-	public Rectangle movingCardPos;
-
-	public bool isMoving { get; private set; }
-
 	public string cardInfo
 	{
 		get
@@ -104,11 +100,6 @@ public class Card(Suit _suit, int _rank)
 	public void flipCard(bool isFacingUp)
 	{
 		isShowingFace = isFacingUp;
-	}
-
-	public void setCardMoving(bool isMoving)
-	{
-		this.isMoving = isMoving;
 	}
 
 	public void LoadContent()
