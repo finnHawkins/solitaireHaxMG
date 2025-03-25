@@ -199,7 +199,10 @@ public class DeckManager()
 
         logDepotCards();
 
-        resetDepotTopmostCardFlags();
+        foreach(var d in depots)
+        {
+            d.updateCardLayers();
+        }
 
         foreach(var card in deck)
         {
@@ -208,20 +211,6 @@ public class DeckManager()
 
         }
 
-    }
-
-    public void resetDepotTopmostCardFlags()
-    {
-        foreach(var depot in depots)
-        {
-            foreach(var card in depot.cardPile)
-            {
-                card.isTopmostCard = false;
-            }
-
-            if(depot.cardPile.Count > 0)
-                depot.cardPile.Last().isTopmostCard = true;
-        }
     }
 
     #region Logging
@@ -390,25 +379,7 @@ public class DeckManager()
 
         }
 
-        updateAllStackCardLayers();
-
-    }
-
-    public void updateAllStackCardLayers()
-    {
-
-        foreach(var f in foundations)
-        {
-            f.updateCardLayers();
-        }
-
-        foreach(var d in depots)
-        {
-            d.updateCardLayers();
-        }
-
-        drawPile.updateCardLayers();
-        discardPile.updateCardLayers();
+        parentStack.updateCardLayers();
 
     }
 
@@ -573,16 +544,14 @@ public class DeckManager()
 
             foreach(var s in overlappingStacks)
             {
+
                 if(isValidMove(topCard, s))
                 {
+
                     validStacks.Add(s);
-                    Console.WriteLine($"valid stack {s.stackID} found");
-
-                } else {
-
-                    Console.WriteLine($"invalid stack {s.stackID} found");
 
                 }
+
             }
 
             //logic is as follows:
@@ -606,8 +575,6 @@ public class DeckManager()
         ownerStack.setCardPositions();
 
         movingCards.Clear();
-
-        updateAllStackCardLayers();
 
     }
 
@@ -633,7 +600,7 @@ public class DeckManager()
                 if((stackLastCard.isRed && !card.isRed) || (!stackLastCard.isRed && card.isRed))
                 {
 
-                    if(stackLastCard.rank == card.rank + 1)
+                    if(stackLastCard.rank == card.rank + 1 && stackLastCard.isShowingFace)
                     {
                         validMove = true;
 
@@ -644,7 +611,7 @@ public class DeckManager()
             } else if(targetStack.stackType == stackType.foundation)
             {
 
-                if(stackLastCard.rank == card.rank - 1)
+                if(stackLastCard.rank == card.rank - 1 && stackLastCard.suit == card.suit)
                 {
                     validMove = true;
 
@@ -675,6 +642,8 @@ public class DeckManager()
     public void moveCardsToStack(CardStackBase newOwningStack)
     {
 
+        Console.WriteLine($"Moving cards to stack {newOwningStack.stackID}");
+
         //remove cards from original stack
         //add cards to new stack
         //update lookup table
@@ -695,7 +664,8 @@ public class DeckManager()
 
         oldOwner.cardPile.RemoveAll(x => newList.Contains(x));
 
-        Console.WriteLine($"Moving cards to stack {newOwningStack.stackID}");
+        oldOwner.updateCardLayers();
+        newOwningStack.updateCardLayers();
 
     }
 

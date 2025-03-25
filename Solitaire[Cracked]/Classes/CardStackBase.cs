@@ -124,6 +124,8 @@ public class CardStackBase
                 card.cardLayer = 0;
             }
             card.isTopmostCard = false;
+
+            Console.WriteLine($"{stackID} : {card.cardInfo} - set layer to {card.cardLayer}");
         }
 
         if(cardPile.Count > 0)
