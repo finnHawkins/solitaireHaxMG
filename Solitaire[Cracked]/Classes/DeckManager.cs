@@ -165,11 +165,6 @@ public class DeckManager()
         Random rng = new();
         deck = deck.OrderBy(_ => rng.Next()).ToList();
 
-        //logging shuffled deck
-        // foreach(Card card in deck)
-        // {
-        // 	Console.WriteLine(card.cardInfo);
-        // }
     }
 
     /// <summary>
@@ -231,37 +226,6 @@ public class DeckManager()
         }
     }
 
-    public void logDict()
-    {
-
-        foreach(KeyValuePair<Card, CardStackBase> entry in lookupTable)
-        {
-            Console.WriteLine($"{entry.Key.cardInfo} belongs to stack {entry.Value.stackID}");
-        }
-
-    }
-
-    public void logCards(CardStackBase cardStack)
-    {
-        Console.Write($"{cardStack.stackID} cards: ");
-        foreach(var card in cardStack.cardPile)
-        {
-            Console.Write(card.cardInfo + ", ");
-        }
-        Console.WriteLine("---------");
-    }
-
-    public void logDeck()
-    {
-
-        Console.Write("Deck cards: ");
-        foreach(var card in deck)
-        {
-            Console.Write($"{card.cardInfo},");
-        }
-        Console.Write("\n");
-    }
-
     #endregion
 
     #region Input Events
@@ -272,8 +236,6 @@ public class DeckManager()
         //need to reset the piles
         if(drawPile.cardPile.Count == 0)
         {
-
-            Console.WriteLine("resetting draw pile");
 
             foreach(var card in discardPile.cardPile)
             {
@@ -316,8 +278,6 @@ public class DeckManager()
 
         var parentStack = getCardOwnerStack(card);
 
-        Console.WriteLine($"{card.cardInfo} belongs to stack {parentStack.stackID}");
-
         if(parentStack.stackType == stackType.foundation)
         {
             //do nothing
@@ -357,7 +317,6 @@ public class DeckManager()
 
                     if(card.rank == 1)
                     {
-                        Console.WriteLine($"empty foundation found, adding card to {f.stackID}");
 
                         parentStack.cardPile.Remove(card);
 
@@ -440,18 +399,12 @@ public class DeckManager()
         //card has not been clicked
         if(ownerStack == null || ownerStack == default)
         {
-            Console.WriteLine("No cards were clicked");
             return topCard;
         }
 
         var applicableCards = ownerStack.cardPile.Where(card => card.cardPos.Contains(mousePos.X, mousePos.Y));
 
         topCard = applicableCards.MinBy(card => card.cardLayer);
-
-        if(topCard != default)
-            Console.WriteLine($"Found topmost card {topCard.cardInfo} that was clicked");
-        else
-            Console.WriteLine("No suitable topmost card found");
 
         return topCard;
 
@@ -466,18 +419,12 @@ public class DeckManager()
 
     public void processCardFlip(Card card)
     {
-        Console.WriteLine($"Turned over card {card.cardInfo} clicked");
 
         if(card == getCardOwnerStack(card).cardPile.Last())
         {
 
-            Console.WriteLine("Flipping card..");
             card.flipCard(true);
 
-        } else {
-
-            Console.WriteLine($"Card could not be flipped as it is not topmost card for {getCardOwnerStack(card).stackID}");
-        
         }
 
     }
@@ -496,8 +443,6 @@ public class DeckManager()
         for(int i = cardIndex; i < ownerStack.cardPile.Count; i++)
         {
             var card = ownerStack.cardPile[i];
-
-            Console.WriteLine($"Adding {card.cardInfo} to moving stack");
 
             movingCards.Add(card);
 
@@ -523,8 +468,6 @@ public class DeckManager()
     public void dropCardStack()
     {
 
-        Console.WriteLine("Dropping card stack");
-
         //check if move is valid
         var topCard = movingCards[0];
 
@@ -534,11 +477,8 @@ public class DeckManager()
         overlappingStacks.AddRange(foundations.Where(s => s.getStackArea().Intersects(topCard.cardPos)));
         overlappingStacks.AddRange(depots.Where(s => s.getStackArea().Intersects(topCard.cardPos)));
 
-        if(overlappingStacks.Count == 0)
+        if(overlappingStacks.Count > 0)
         {
-            Console.WriteLine("No overlapping areas found, moving cards to original places.");
-
-        } else {
 
             List<CardStackBase> validStacks = [];
 
@@ -641,8 +581,6 @@ public class DeckManager()
 
     public void moveCardsToStack(CardStackBase newOwningStack)
     {
-
-        Console.WriteLine($"Moving cards to stack {newOwningStack.stackID}");
 
         //remove cards from original stack
         //add cards to new stack

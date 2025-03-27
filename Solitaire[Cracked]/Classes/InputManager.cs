@@ -125,8 +125,6 @@ public class InputManager(DeckManager dm)
 
                     } else {
 
-                        Console.WriteLine("Processing click in IM");
-
                         if(cardBeingInteractedWith != null)
                         {
                             if(lastCardInteractedWith == cardBeingInteractedWith)
@@ -159,7 +157,6 @@ public class InputManager(DeckManager dm)
                     {
                         if(cardBeingInteractedWith.isShowingFace)
                         {
-                            Console.WriteLine($"Dropping {cardBeingInteractedWith.cardInfo}");
                             deckManager.dropCardStack();
                         }
                     }
@@ -224,7 +221,6 @@ public class InputManager(DeckManager dm)
                 var cardOffsetY = currMouseState.Y - cardBeingInteractedWith.cardPos.Y;
                 var cardOffsetX = currMouseState.X - cardBeingInteractedWith.cardPos.X;
                 mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
-                Console.WriteLine($"Mouse offset set to x = {cardOffsetX}, y = {cardOffsetY}");                
             }
 
         }
