@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Schema;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 public class DeckManager()
@@ -80,7 +82,7 @@ public class DeckManager()
 
     }
 
-    public void LoadContent()
+    public void LoadContent(ContentManager content)
     {
 
         _spriteBatch = new SpriteBatch(graphics);
@@ -88,7 +90,7 @@ public class DeckManager()
 
         foreach(KeyValuePair<Card, CardStackBase> entry in lookupTable)
         {
-            entry.Key.LoadContent();
+            entry.Key.LoadContent(content);
         }
 
     }
@@ -101,15 +103,65 @@ public class DeckManager()
         _spriteBatch.Begin();
         _movingCardSpriteBatch.Begin();
 
-        foreach(KeyValuePair<Card, CardStackBase> entry in lookupTable)
+        foreach(var card in discardPile.cardPile)
         {
-            if(movingCards.Contains(entry.Key))
+            if(movingCards.Contains(card))
             {
-                entry.Key.Draw(_movingCardSpriteBatch);
+                card.Draw(_movingCardSpriteBatch);
             } else {
-                entry.Key.Draw(_spriteBatch);
+                card.Draw(_spriteBatch);
             }
         }
+
+        foreach(var card in drawPile.cardPile)
+        {
+            if(movingCards.Contains(card))
+            {
+                card.Draw(_movingCardSpriteBatch);
+            } else {
+                card.Draw(_spriteBatch);
+            }
+        }
+
+        foreach(var f in foundations)
+        {
+            
+            foreach(var card in f.cardPile)
+            {
+                if(movingCards.Contains(card))
+                {
+                    card.Draw(_movingCardSpriteBatch);
+                } else {
+                    card.Draw(_spriteBatch);
+                }
+            }
+     
+        }
+
+        foreach(var d in depots)
+        {
+            
+            foreach(var card in d.cardPile)
+            {
+                if(movingCards.Contains(card))
+                {
+                    card.Draw(_movingCardSpriteBatch);
+                } else {
+                    card.Draw(_spriteBatch);
+                }
+            }
+     
+        }
+
+        // foreach(KeyValuePair<Card, CardStackBase> entry in lookupTable)
+        // {
+        //     if(movingCards.Contains(entry.Key))
+        //     {
+        //         entry.Key.Draw(_movingCardSpriteBatch);
+        //     } else {
+        //         entry.Key.Draw(_spriteBatch);
+        //     }
+        // }
 
         _spriteBatch.End();
         _movingCardSpriteBatch.End();

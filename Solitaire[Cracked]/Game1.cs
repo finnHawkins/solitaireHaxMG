@@ -47,7 +47,9 @@ public class Game1 : Game
     protected override void LoadContent()
     {
 
-        deckManager.LoadContent();
+        deckManager.LoadContent(content);
+
+        base.LoadContent();
 
     }
 
@@ -82,13 +84,13 @@ public class Game1 : Game
     /// Code copied from the above link for more finessed content managers
     /// </summary>
     /// <returns></returns>
-    public static ContentManager GetNewContentManagerInstance()
-    {
-      // create a new content manager instance
-      ContentManager temp = new ContentManager(content.ServiceProvider, content.RootDirectory);
-      temp.RootDirectory = "Content";
-      return temp;
-    }
+    // public static ContentManager GetNewContentManagerInstance()
+    // {
+    //   // create a new content manager instance
+    //   ContentManager temp = new ContentManager(content.ServiceProvider, content.RootDirectory);
+    //   temp.RootDirectory = "Content";
+    //   return temp;
+    // }
 
     public static InputManager GetInputManager()
     {

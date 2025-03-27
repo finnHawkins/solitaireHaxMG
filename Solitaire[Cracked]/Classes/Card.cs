@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -33,8 +34,6 @@ public class Card(Suit _suit, int _rank)
 
 	Texture2D cardImg;
 	Texture2D cardBack;
-
-	private readonly ContentManager content = Game1.GetNewContentManagerInstance();
 
 	public Rectangle cardPos;
 
@@ -102,7 +101,7 @@ public class Card(Suit _suit, int _rank)
 		isShowingFace = isFacingUp;
 	}
 
-	public void LoadContent()
+	public void LoadContent(ContentManager content)
 	{
 
 		cardBack = content.Load<Texture2D>("BACK_RED");
@@ -123,18 +122,28 @@ public class Card(Suit _suit, int _rank)
 	public void Draw(SpriteBatch spriteBatch)
 	{
 
-		if (isShowingFace)
+		try
 		{
-			spriteBatch.Draw(texture: cardImg,
-								destinationRectangle: cardPos,
-								color: Color.White,
-								layerDepth: cardLayer,
-								rotation: 0,
-								origin: new Vector2(0, 0),
-								effects: SpriteEffects.None,
-								sourceRectangle: null);
-		} else {
-			spriteBatch.Draw(cardBack, new Vector2(cardPos.X, cardPos.Y), Color.White);
+			
+			if (isShowingFace)
+			{
+				// spriteBatch.Draw(texture: cardImg,
+				// 					destinationRectangle: cardPos,
+				// 					color: Color.White,
+				// 					layerDepth: cardLayer,
+				// 					rotation: 0,
+				// 					origin: new Vector2(0, 0),
+				// 					effects: SpriteEffects.None,
+				// 					sourceRectangle: null);
+				spriteBatch.Draw(cardImg, new Vector2(cardPos.X, cardPos.Y), Color.White);
+			} else {
+				spriteBatch.Draw(cardBack, new Vector2(cardPos.X, cardPos.Y), Color.White);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+			throw;
 		}
 
 	}
