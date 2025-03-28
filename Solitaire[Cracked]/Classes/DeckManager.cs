@@ -315,7 +315,7 @@ public class DeckManager()
     public void sendCardToFoundation(Card card)
     {
 
-        if(!card.isTopmostCard)
+        if(!card.isTopmostCard || !card.isShowingFace)
         {
             return;
         }
@@ -496,10 +496,6 @@ public class DeckManager()
 
     public void moveCards(Vector2 newCardPos)
     {
-
-        Console.WriteLine("Moving card stack");
-
-        //TODO - sort out layering
 
         foreach(var c in movingCards)
         {
