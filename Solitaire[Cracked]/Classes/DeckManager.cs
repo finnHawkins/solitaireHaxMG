@@ -105,20 +105,16 @@ public class DeckManager()
 
         foreach(var card in discardPile.cardPile)
         {
-            if(movingCards.Contains(card))
+            if(!movingCards.Contains(card))
             {
-                card.Draw(_movingCardSpriteBatch);
-            } else {
                 card.Draw(_spriteBatch);
             }
         }
 
         foreach(var card in drawPile.cardPile)
         {
-            if(movingCards.Contains(card))
+            if(!movingCards.Contains(card))
             {
-                card.Draw(_movingCardSpriteBatch);
-            } else {
                 card.Draw(_spriteBatch);
             }
         }
@@ -128,10 +124,8 @@ public class DeckManager()
             
             foreach(var card in f.cardPile)
             {
-                if(movingCards.Contains(card))
+                if(!movingCards.Contains(card))
                 {
-                    card.Draw(_movingCardSpriteBatch);
-                } else {
                     card.Draw(_spriteBatch);
                 }
             }
@@ -143,25 +137,18 @@ public class DeckManager()
             
             foreach(var card in d.cardPile)
             {
-                if(movingCards.Contains(card))
+                if(!movingCards.Contains(card))
                 {
-                    card.Draw(_movingCardSpriteBatch);
-                } else {
                     card.Draw(_spriteBatch);
                 }
             }
      
         }
 
-        // foreach(KeyValuePair<Card, CardStackBase> entry in lookupTable)
-        // {
-        //     if(movingCards.Contains(entry.Key))
-        //     {
-        //         entry.Key.Draw(_movingCardSpriteBatch);
-        //     } else {
-        //         entry.Key.Draw(_spriteBatch);
-        //     }
-        // }
+        foreach(var card in movingCards)
+        {
+            card.Draw(_movingCardSpriteBatch);
+        }
 
         _spriteBatch.End();
         _movingCardSpriteBatch.End();

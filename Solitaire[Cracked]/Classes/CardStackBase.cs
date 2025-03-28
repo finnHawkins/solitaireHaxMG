@@ -123,7 +123,6 @@ public class CardStackBase
             }
             card.isTopmostCard = false;
 
-            Console.WriteLine($"{stackID} : {card.cardInfo} - set layer to {card.cardLayer}");
         }
 
         if(cardPile.Count > 0)
