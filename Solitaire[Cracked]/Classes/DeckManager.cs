@@ -315,6 +315,11 @@ public class DeckManager()
     public void sendCardToFoundation(Card card)
     {
 
+        if(!card.isTopmostCard)
+        {
+            return;
+        }
+
         var parentStack = getCardOwnerStack(card);
 
         if(parentStack.stackType == stackType.foundation)
