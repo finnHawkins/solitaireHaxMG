@@ -24,6 +24,8 @@ public class InputManager(DeckManager dm)
     MouseState prevMouseState;
     MouseState currMouseState;
 
+    KeyboardState prevKbState;
+
     GameTime gt;
 
     Card lastCardInteractedWith;
@@ -36,6 +38,8 @@ public class InputManager(DeckManager dm)
 
     TimeSpan doubleClickTimeout;
 
+    bool undoKeysHeld;
+
     public void Update(GameTime gameTime)
     {
 
@@ -46,10 +50,15 @@ public class InputManager(DeckManager dm)
 
         gt = gameTime;
 
-        // if(!isClickAllowed())
-        // {
-        //     return;
-        // }
+        if(Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+        {
+            Console.WriteLine("Left ctrl down");
+            if(Keyboard.GetState().IsKeyDown(Keys.Z))
+            {
+                Console.WriteLine("Z down");
+                undoKeysHeld = true;
+            }
+        }
 
         if(isLeftMouseButtonDown())
         {

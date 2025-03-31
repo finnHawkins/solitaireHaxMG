@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Schema;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-public class DeckManager()
+public class DeckManager(StateManager sm)
 {
 
     GraphicsDevice graphics;
@@ -23,6 +22,8 @@ public class DeckManager()
     private List<Card> movingCards = new();
 
     private Dictionary<Card, CardStackBase> lookupTable = new();
+
+    private StateManager stateManager = sm;
 
     public void Initialize(GraphicsDevice gd)
     {
@@ -159,6 +160,7 @@ public class DeckManager()
     {
 
         Console.WriteLine("Restarting game...");
+        stateManager.resetStateHistory();
 
         deck.Clear();
 
@@ -245,6 +247,8 @@ public class DeckManager()
 
         }
 
+        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
+
     }
 
     #region Logging
@@ -309,6 +313,8 @@ public class DeckManager()
 
             lookupTable[card] = discardPile;
         }
+
+        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
     }
 
@@ -383,6 +389,8 @@ public class DeckManager()
         }
 
         parentStack.updateCardLayers();
+
+        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
     }
 
@@ -468,6 +476,8 @@ public class DeckManager()
         {
 
             card.flipCard(true);
+
+            stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
         }
 
@@ -644,6 +654,8 @@ public class DeckManager()
 
         oldOwner.updateCardLayers();
         newOwningStack.updateCardLayers();
+
+        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
     }
 

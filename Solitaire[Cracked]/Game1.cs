@@ -11,8 +11,9 @@ public class Game1 : Game
     public GraphicsDevice device;
 
     private static SettingsManager settings;
-    private DeckManager deckManager = new();
-    private static InputManager inputManager;
+    private static DeckManager deckManager;
+    private static InputManager inputManager = new(deckManager);
+    private static StateManager stateManager = new();
     
     public Game1()
     {
@@ -23,6 +24,8 @@ public class Game1 : Game
         IsMouseVisible = true;
 
         settings = new SettingsManager(_graphics);
+
+        deckManager = new DeckManager(stateManager);
 
         inputManager = new InputManager(deckManager);
 
