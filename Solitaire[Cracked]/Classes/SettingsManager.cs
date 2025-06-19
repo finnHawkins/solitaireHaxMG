@@ -3,6 +3,24 @@ using Microsoft.Xna.Framework;
 
 public class SettingsManager {
 
+private static SettingsManager instance = null;
+    private static readonly object padlock = new object();
+
+    public static SettingsManager Instance
+    {
+        get
+        {
+            lock (padlock)
+            {
+                if (instance == null)
+                {
+                    instance = new SettingsManager();
+                }
+                return instance;
+            }
+        }
+    }
+
     // 1 = 640 x 360
     // 2 = 1280 x 720
     // 3 = 1920 x 1080
@@ -25,11 +43,9 @@ public class SettingsManager {
 
     private GraphicsDeviceManager _graphics;
 
-    public SettingsManager(GraphicsDeviceManager graphics)
+    public void assignGdm(GraphicsDeviceManager graphics)
     {
-        
         _graphics = graphics;
-
     }
 
     /// <summary>

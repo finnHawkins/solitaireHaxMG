@@ -2,7 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-public class InputManager(DeckManager dm)
+public class InputManager
 {
 
     public enum moveState
@@ -12,7 +12,23 @@ public class InputManager(DeckManager dm)
         idle
     }
 
-    public DeckManager deckManager = dm;
+    private static InputManager instance = null;
+    private static readonly object padlock = new object();
+
+    public static InputManager Instance
+    {
+        get
+        {
+            lock (padlock)
+            {
+                if (instance == null)
+                {
+                    instance = new InputManager();
+                }
+                return instance;
+            }
+        }
+    }
 
     bool isRestartKeyBeingPressed;
 
@@ -77,7 +93,7 @@ public class InputManager(DeckManager dm)
 
                 var mousePos = new Vector2(currMouseState.X, currMouseState.Y);
 
-                var topMostcard = deckManager.getTopmostCardAtMousePos(mousePos);
+                var topMostcard = DeckManager.Instance.getTopmostCardAtMousePos(mousePos);
 
                 cardBeingInteractedWith = topMostcard;
 
@@ -120,14 +136,14 @@ public class InputManager(DeckManager dm)
                 {
 
                     //Check if draw pile got clicked
-                    var stackUnderMouse = deckManager.getStackAtMousePos(mousePos);
+                    var stackUnderMouse = DeckManager.Instance.getStackAtMousePos(mousePos);
 
                     if(stackUnderMouse != null && stackUnderMouse.stackType == stackType.drawPile)
                     {
 
                         if(stackUnderMouse.cardPile.Count == 0 || cardBeingInteractedWith == stackUnderMouse.cardPile[0])
                         {
-                            deckManager.onDrawPileClicked();
+                            DeckManager.Instance.onDrawPileClicked();
                             cardBeingInteractedWith = null;
                             lastCardInteractedWith = null;
                         }
@@ -140,14 +156,14 @@ public class InputManager(DeckManager dm)
                             {
                                 if(clickIsWithinDoubleClickTimeframe())
                                 {
-                                    deckManager.sendCardToFoundation(cardBeingInteractedWith);
+                                    DeckManager.Instance.sendCardToFoundation(cardBeingInteractedWith);
                                 }
 
                             } else {
 
                                 if(!cardBeingInteractedWith.isShowingFace)
                                 {
-                                    deckManager.processCardFlip(cardBeingInteractedWith);
+                                    DeckManager.Instance.processCardFlip(cardBeingInteractedWith);
                                 }
 
                             }
@@ -166,7 +182,7 @@ public class InputManager(DeckManager dm)
                     {
                         if(cardBeingInteractedWith.isShowingFace)
                         {
-                            deckManager.dropCardStack();
+                            DeckManager.Instance.dropCardStack();
                         }
                     }
 
@@ -225,7 +241,7 @@ public class InputManager(DeckManager dm)
 
             if(cardBeingInteractedWith.isShowingFace)
             {
-                deckManager.setCardStackToMoving(cardBeingInteractedWith);
+                DeckManager.Instance.setCardStackToMoving(cardBeingInteractedWith);
 
                 var cardOffsetY = currMouseState.Y - cardBeingInteractedWith.cardPos.Y;
                 var cardOffsetX = currMouseState.X - cardBeingInteractedWith.cardPos.X;
@@ -244,7 +260,7 @@ public class InputManager(DeckManager dm)
         var newXpos = mousePos.X - mouseOffsetOnClick.X;
         var newYpos = mousePos.Y - mouseOffsetOnClick.Y;
                         
-        deckManager.moveCards(new Vector2(newXpos, newYpos));
+        DeckManager.Instance.moveCards(new Vector2(newXpos, newYpos));
     }
 
     // public bool isClickAllowed()

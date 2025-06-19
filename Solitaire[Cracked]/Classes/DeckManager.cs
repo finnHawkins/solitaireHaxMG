@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-public class DeckManager(StateManager sm)
+public class DeckManager
 {
 
     GraphicsDevice graphics;
@@ -23,18 +24,34 @@ public class DeckManager(StateManager sm)
 
     private Dictionary<Card, CardStackBase> lookupTable = new();
 
-    private StateManager stateManager = sm;
+    private static DeckManager instance = null;
+    private static readonly object padlock = new object();
+
+    public static DeckManager Instance
+    {
+        get
+        {
+            lock (padlock)
+            {
+                if (instance == null)
+                {
+                    instance = new DeckManager();
+                }
+                return instance;
+            }
+        }
+    }
 
     public void Initialize(GraphicsDevice gd)
     {
         //create depots
-        for(int i = 1; i < 8; i++)
+        for (int i = 1; i < 8; i++)
         {
             depots.Add(new Depot(stackType.depot, i));
         }
 
         //create foundations
-        for(int i = 1; i < 5; i++)
+        for (int i = 1; i < 5; i++)
         {
             foundations.Add(new Foundation(stackType.foundation, i));
         }
@@ -160,7 +177,7 @@ public class DeckManager(StateManager sm)
     {
 
         Console.WriteLine("Restarting game...");
-        stateManager.resetStateHistory();
+        StateManager.Instance.resetStateHistory();
 
         deck.Clear();
 
@@ -247,7 +264,7 @@ public class DeckManager(StateManager sm)
 
         }
 
-        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
+        StateManager.Instance.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
     }
 
@@ -314,7 +331,7 @@ public class DeckManager(StateManager sm)
             lookupTable[card] = discardPile;
         }
 
-        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
+        StateManager.Instance.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
     }
 
@@ -390,7 +407,7 @@ public class DeckManager(StateManager sm)
 
         parentStack.updateCardLayers();
 
-        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
+        StateManager.Instance.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
     }
 
@@ -477,7 +494,7 @@ public class DeckManager(StateManager sm)
 
             card.flipCard(true);
 
-            stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
+            StateManager.Instance.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
         }
 
@@ -655,7 +672,7 @@ public class DeckManager(StateManager sm)
         oldOwner.updateCardLayers();
         newOwningStack.updateCardLayers();
 
-        stateManager.saveNewBoardState(depots, foundations, drawPile, discardPile);
+        StateManager.Instance.saveNewBoardState(depots, foundations, drawPile, discardPile);
 
     }
 

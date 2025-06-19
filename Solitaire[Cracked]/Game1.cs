@@ -10,11 +10,6 @@ public class Game1 : Game
     public static ContentManager content;
     public GraphicsDevice device;
 
-    private static SettingsManager settings;
-    private static DeckManager deckManager;
-    private static InputManager inputManager = new(deckManager);
-    private static StateManager stateManager = new();
-    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -23,13 +18,8 @@ public class Game1 : Game
 
         IsMouseVisible = true;
 
-        settings = new SettingsManager(_graphics);
-
-        deckManager = new DeckManager(stateManager);
-
-        inputManager = new InputManager(deckManager);
-
-        settings.changeResolution(Constants.BASE_WIDTH, Constants.BASE_HEIGHT);
+        SettingsManager.Instance.assignGdm(_graphics);
+        SettingsManager.Instance.changeResolution(Constants.BASE_WIDTH, Constants.BASE_HEIGHT);
 
     }
 
@@ -37,12 +27,12 @@ public class Game1 : Game
     {
         // TODO: Add your initialization logic here
         
-        deckManager.Initialize(GraphicsDevice);
+        DeckManager.Instance.Initialize(GraphicsDevice);
 
         // TODO - find better cursor
-		//var mouseTexture = content.Load<Texture2D>("cursor_pointer");
+        //var mouseTexture = content.Load<Texture2D>("cursor_pointer");
         //Mouse.SetCursor(MouseCursor.FromTexture2D(mouseTexture, 0, 0));
-        
+
 
         base.Initialize();
     }
@@ -50,7 +40,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
 
-        deckManager.LoadContent(content);
+        DeckManager.Instance.LoadContent(content);
 
         base.LoadContent();
 
@@ -58,14 +48,14 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if(inputManager.isExitGameButtonDown())
+        if(InputManager.Instance.isExitGameButtonDown())
             Exit();
 
-        inputManager.Update(gameTime);
+        InputManager.Instance.Update(gameTime);
 
-        if(inputManager.shouldRestartGame)
+        if(InputManager.Instance.shouldRestartGame)
         {
-            deckManager.restartGame();
+            DeckManager.Instance.restartGame();
         }
 
         base.Update(gameTime);
@@ -77,38 +67,9 @@ public class Game1 : Game
 
         // TODO: Add your drawing code here
 
-        deckManager.Draw();
+        DeckManager.Instance.Draw();
 
         base.Draw(gameTime);
-    }
-
-    /// <summary>
-    /// https://community.monogame.net/t/passing-the-contentmanager-to-every-class-feels-wrong-is-it/10470/9
-    /// Code copied from the above link for more finessed content managers
-    /// </summary>
-    /// <returns></returns>
-    // public static ContentManager GetNewContentManagerInstance()
-    // {
-    //   // create a new content manager instance
-    //   ContentManager temp = new ContentManager(content.ServiceProvider, content.RootDirectory);
-    //   temp.RootDirectory = "Content";
-    //   return temp;
-    // }
-
-    public static InputManager GetInputManager()
-    {
-        return inputManager;
-    }
-
-    public static SettingsManager GetSettingsManager()
-    {
-        return settings;
-    }
-
-    // may not be needed
-    public GraphicsDevice GetGraphicsDevice()
-    {
-        return device;
     }
 
 }
