@@ -1,16 +1,12 @@
-
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Solitaire_Cracked_;
 
 public enum stackType {
     drawPile,
     discardPile,
     foundation,
     depot,
-    movePile
 }
 
 public class CardStackBase
@@ -22,7 +18,7 @@ public class CardStackBase
 
     public Rectangle baseCardPosition;
 
-    public int stackCounter = 0;
+    public int stackCounter;
 
     public string stackID {
         get {

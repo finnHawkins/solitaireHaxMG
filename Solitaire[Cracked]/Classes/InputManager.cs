@@ -92,10 +92,8 @@ public class InputManager(DeckManager dm)
                         setMouseToDrag();
                     }
 
-                } else if(mouseMoveState == moveState.drag && cardBeingInteractedWith != null) {
-
-                    if(cardBeingInteractedWith.isShowingFace)
-                        updateCardPos();
+                } else if (mouseMoveState == moveState.drag && cardBeingInteractedWith is { isShowingFace: true }) {
+                    updateCardPos();
                 }
 
             }
@@ -113,7 +111,7 @@ public class InputManager(DeckManager dm)
                     //Check if draw pile got clicked
                     var stackUnderMouse = deckManager.getStackAtMousePos(mousePos);
 
-                    if(stackUnderMouse != null && stackUnderMouse.stackType == stackType.drawPile)
+                    if(stackUnderMouse is { stackType: stackType.drawPile })
                     {
 
                         if(stackUnderMouse.cardPile.Count == 0 || cardBeingInteractedWith == stackUnderMouse.cardPile[0])
@@ -153,12 +151,9 @@ public class InputManager(DeckManager dm)
 
                 } else {
 
-                    if(cardBeingInteractedWith != null)
+                    if(cardBeingInteractedWith is { isShowingFace: true })
                     {
-                        if(cardBeingInteractedWith.isShowingFace)
-                        {
-                            deckManager.dropCardStack();
-                        }
+                        deckManager.dropCardStack();
                     }
 
 
@@ -211,18 +206,13 @@ public class InputManager(DeckManager dm)
     {
         mouseMoveState = moveState.drag;
 
-        if(cardBeingInteractedWith != null)
+        if(cardBeingInteractedWith is { isShowingFace: true })
         {
+            deckManager.setCardStackToMoving(cardBeingInteractedWith);
 
-            if(cardBeingInteractedWith.isShowingFace)
-            {
-                deckManager.setCardStackToMoving(cardBeingInteractedWith);
-
-                var cardOffsetY = currMouseState.Y - cardBeingInteractedWith.cardPos.Y;
-                var cardOffsetX = currMouseState.X - cardBeingInteractedWith.cardPos.X;
-                mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
-            }
-
+            var cardOffsetY = currMouseState.Y - cardBeingInteractedWith.cardPos.Y;
+            var cardOffsetX = currMouseState.X - cardBeingInteractedWith.cardPos.X;
+            mouseOffsetOnClick = new Vector2(cardOffsetX, cardOffsetY);
         }
 
         Console.WriteLine("Mouse state set to drag");

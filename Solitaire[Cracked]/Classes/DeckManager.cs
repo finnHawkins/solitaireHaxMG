@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Schema;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-public class DeckManager()
+public class DeckManager
 {
 
     GraphicsDevice graphics;
@@ -401,7 +400,7 @@ public class DeckManager()
             }
         }
 
-        if(ownerStack == null || ownerStack == default)
+        if(ownerStack == null)
         {
             foreach(var d in depots)
             {
@@ -413,7 +412,7 @@ public class DeckManager()
             }
         }
 
-        if(ownerStack == null || ownerStack == default)
+        if(ownerStack == null)
         {
             if(discardPile.getCardRectangle().Contains(mousePos))
             {
@@ -435,22 +434,18 @@ public class DeckManager()
 
         if(ownerStack?.stackType == stackType.discardPile)
         {
-            return ownerStack.cardPile.Count == 0 ? default : ownerStack.cardPile.Last();
+            return ownerStack.cardPile.Count == 0 ? null : ownerStack.cardPile.Last();
         }
 
-        Card topCard = default;
-
         //card has not been clicked
-        if(ownerStack == null || ownerStack == default)
+        if(ownerStack == null)
         {
-            return topCard;
+            return null;
         }
 
         var applicableCards = ownerStack.cardPile.Where(card => card.cardPos.Contains(mousePos.X, mousePos.Y));
 
-        topCard = applicableCards.MinBy(card => card.cardLayer);
-
-        return topCard;
+        return applicableCards.MinBy(card => card.cardLayer);
 
     }
 
@@ -511,8 +506,6 @@ public class DeckManager()
         //check if move is valid
         var topCard = movingCards[0];
 
-        var topCardRect = new Rectangle(topCard.cardPos.X, topCard.cardPos.Y, 1, Constants.CARD_WIDTH);
-
         List<CardStackBase> overlappingStacks = [];
         overlappingStacks.AddRange(foundations.Where(s => s.getStackArea().Intersects(topCard.cardPos)));
         overlappingStacks.AddRange(depots.Where(s => s.getStackArea().Intersects(topCard.cardPos)));
@@ -563,14 +556,14 @@ public class DeckManager()
 
         bool validMove = false;
 
-        Card stackLastCard = default;
+        Card stackLastCard = null;
 
         if(targetStack.cardPile.Count > 0)
         {
             stackLastCard = targetStack.cardPile.Last();
         }
 
-        if(stackLastCard != null || stackLastCard != default)
+        if(stackLastCard != null)
         {
 
             if(targetStack.stackType == stackType.depot)
